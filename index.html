@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -17,26 +16,50 @@
     .prose h1 { font-size: 1.25rem; }
     .prose h2 { font-size: 1.1rem; }
     .prose h3 { font-size: 1rem; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
   <!-- TOP HEADER -->
-  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between">
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-3.5 flex items-center justify-between shrink-0">
     <div class="flex items-center space-x-3">
       <i class="fa-solid fa-book-open-reader text-indigo-400 text-2xl"></i>
-      <h1 class="text-xl font-bold tracking-wide">Book Review Studio</h1>
-      <span class="text-xs bg-indigo-900/60 text-indigo-300 border border-indigo-700 px-2 py-0.5 rounded-full font-mono">Multi-Agent Critique & Chapter Storage</span>
+      <div>
+        <h1 class="text-lg font-bold tracking-wide leading-tight">Book Review Studio</h1>
+        <p class="text-[11px] text-slate-400">Multi-Agent Critique & Chapter Library</p>
+      </div>
     </div>
+
+    <!-- Right Control Bar (Reader/Author Toggle & Settings) -->
     <div class="flex items-center space-x-3">
-      <button id="export-btn" onclick="exportMarkdown()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm px-3 py-1.5 rounded-md flex items-center space-x-2 transition">
+      
+      <!-- Mode Badge Indicator -->
+      <div id="mode-badge" class="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300">
+        <!-- Dynamic via JS -->
+      </div>
+
+      <!-- Mode Unlock/Lock Button -->
+      <button id="auth-toggle-btn" onclick="toggleAuthorAuth()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-lg flex items-center space-x-1.5 transition shadow">
+        <i id="auth-toggle-icon" class="fa-solid fa-lock"></i>
+        <span id="auth-toggle-text">Author Login</span>
+      </button>
+
+      <!-- Export Button -->
+      <button id="export-btn" onclick="exportMarkdown()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg flex items-center space-x-2 transition border border-slate-600">
         <i class="fa-solid fa-download"></i>
         <span>Export MD</span>
       </button>
-      <button onclick="toggleSettingsModal(true)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-1.5 rounded-md flex items-center space-x-2 transition shadow">
+
+      <!-- Settings Button -->
+      <button onclick="openSettingsModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-lg flex items-center space-x-2 transition shadow">
         <i class="fa-solid fa-gear"></i>
-        <span>Settings & API Keys</span>
+        <span>Settings</span>
       </button>
+
     </div>
   </header>
 
@@ -44,15 +67,17 @@
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
 
     <!-- LEFT PANEL: CONTROLS & CHAPTER INPUT (5 Cols) -->
-    <section class="lg:col-span-5 flex flex-col space-y-4 bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg">
+    <section class="lg:col-span-5 flex flex-col space-y-4 bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg overflow-hidden">
       
       <!-- Chapter Management Header -->
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <h2 class="text-lg font-semibold text-slate-200 flex items-center space-x-2">
+        <h2 class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
           <i class="fa-solid fa-book text-indigo-400"></i>
-          <span>Chapter Manager</span>
+          <span>Chapter Library</span>
         </h2>
-        <button onclick="createNewChapter()" class="bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700 text-xs px-2.5 py-1 rounded-md flex items-center space-x-1.5 transition">
+        
+        <!-- Author Only: Create Chapter Button -->
+        <button id="author-new-chap-btn" onclick="createNewChapter()" class="hidden bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700 text-xs px-2.5 py-1 rounded-md items-center space-x-1.5 transition">
           <i class="fa-solid fa-plus text-xs"></i>
           <span>New Chapter</span>
         </button>
@@ -60,12 +85,14 @@
 
       <!-- Chapter Dropdown Selector -->
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1">Select Active Chapter</label>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Select Chapter</label>
         <div class="flex space-x-2">
-          <select id="chapter-select" onchange="onChapterSelectChange()" class="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 font-medium">
+          <select id="chapter-select" onchange="onChapterSelectChange()" class="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 font-medium">
             <!-- Populated dynamically -->
           </select>
-          <button onclick="deleteCurrentChapter()" title="Delete Chapter" class="bg-rose-900/40 hover:bg-rose-800/80 text-rose-300 border border-rose-800 px-3 rounded-md transition">
+          
+          <!-- Author Only: Delete Button -->
+          <button id="author-delete-chap-btn" onclick="deleteCurrentChapter()" title="Delete Chapter" class="hidden bg-rose-900/40 hover:bg-rose-800/80 text-rose-300 border border-rose-800 px-3 rounded-md transition">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -76,19 +103,19 @@
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Chapter Title / ID</label>
           <input id="chapter-title" type="text" oninput="autoSaveCurrentChapter()" placeholder="e.g. Chapter 1: The Arrival" 
-            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed">
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Genre / Context</label>
           <input id="chapter-genre" type="text" oninput="autoSaveCurrentChapter()" placeholder="e.g. Sci-Fi, Dark Fantasy" 
-            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed">
         </div>
       </div>
 
       <!-- Target Age Group -->
       <div>
         <label class="block text-xs font-medium text-slate-400 mb-1">Target Consumer Age Group</label>
-        <select id="target-age-group" onchange="autoSaveCurrentChapter()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+        <select id="target-age-group" onchange="autoSaveCurrentChapter()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed">
           <option value="Middle Grade (8-12 years)">Middle Grade (8–12 years)</option>
           <option value="Young Adult (12-18 years)">Young Adult (12–18 years)</option>
           <option value="New Adult (18-25 years)">New Adult (18–25 years)</option>
@@ -102,44 +129,50 @@
       <div class="flex-1 flex flex-col min-h-[200px]">
         <div class="flex justify-between items-center mb-1">
           <label class="block text-xs font-medium text-slate-400">Chapter Content / Text</label>
-          <span id="save-status" class="text-[11px] text-slate-500 font-mono">Auto-saved</span>
+          <span id="save-status" class="text-[11px] text-slate-500 font-mono">Reader View (Read-Only)</span>
         </div>
-        <textarea id="chapter-text" oninput="autoSaveCurrentChapter()" placeholder="Paste your chapter text here..." 
-          class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-md p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed"></textarea>
+        <textarea id="chapter-text" oninput="autoSaveCurrentChapter()" placeholder="Paste chapter text here..." 
+          class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-md p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed custom-scrollbar disabled:opacity-75 disabled:cursor-not-allowed"></textarea>
       </div>
 
       <!-- Agent Selection Checkboxes -->
-      <div>
+      <div id="agent-checkboxes-container">
         <label class="block text-xs font-medium text-slate-400 mb-2">Select Active Review Agents</label>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900">
-            <input type="checkbox" id="agent-publisher" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
+            <input type="checkbox" id="agent-publisher" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600 disabled:cursor-not-allowed">
             <span>🏢 Literary Publisher</span>
           </label>
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900">
-            <input type="checkbox" id="agent-editor" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
+            <input type="checkbox" id="agent-editor" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600 disabled:cursor-not-allowed">
             <span>✏️ Developmental Editor</span>
           </label>
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900">
-            <input type="checkbox" id="agent-writer" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
-            <span>✍️ Peer Writer</span>
+            <input type="checkbox" id="agent-writer" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600 disabled:cursor-not-allowed">
+            <span>✍️️ Peer Writer</span>
           </label>
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900">
-            <input type="checkbox" id="agent-target-fan" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
+            <input type="checkbox" id="agent-target-fan" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600 disabled:cursor-not-allowed">
             <span>📖 Target Genre Fan</span>
           </label>
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900 col-span-2">
-            <input type="checkbox" id="agent-skeptic-reader" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
+            <input type="checkbox" id="agent-skeptic-reader" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600 disabled:cursor-not-allowed">
             <span>🧐 Out-of-Genre Explorer (Skeptic)</span>
           </label>
         </div>
       </div>
 
-      <!-- Execute Button -->
-      <button id="run-btn" onclick="runAllReviews()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 rounded-md shadow-md flex items-center justify-center space-x-2 transition">
+      <!-- Execute Reviews Button (Author Mode Only) -->
+      <button id="run-btn" onclick="runAllReviews()" class="hidden w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 rounded-md shadow-md items-center justify-center space-x-2 transition text-xs">
         <i class="fa-solid fa-play"></i>
         <span>Run Selected Reviews</span>
       </button>
+
+      <div id="reader-notice" class="bg-slate-900/80 border border-slate-700/70 rounded-md p-2.5 text-center text-xs text-slate-400 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-lock text-amber-400"></i>
+        <span>Unlock <b>Author Mode</b> to edit text or run AI critiques.</span>
+      </div>
+
     </section>
 
     <!-- RIGHT PANEL: FEEDBACK WORKSPACE (7 Cols) -->
@@ -161,11 +194,11 @@
       <div id="empty-state" class="flex-1 flex flex-col items-center justify-center text-slate-500 py-12">
         <i class="fa-solid fa-comments-question text-5xl mb-3 text-slate-600"></i>
         <p class="text-base font-medium">No reviews generated yet for this chapter.</p>
-        <p class="text-xs text-slate-500 max-w-sm text-center mt-1">Configure your API key in Settings, paste chapter text on the left, and click "Run Selected Reviews".</p>
+        <p class="text-xs text-slate-500 max-w-sm text-center mt-1">Authors can unlock Author Mode to configure keys and run reviews.</p>
       </div>
 
       <!-- Feedback Cards Scrollable Container -->
-      <div id="feedback-container" class="flex-1 overflow-y-auto space-y-4 pr-1 hidden">
+      <div id="feedback-container" class="flex-1 overflow-y-auto space-y-4 pr-1 custom-scrollbar hidden">
         
         <!-- Publisher Output Card -->
         <div id="card-publisher" class="agent-card bg-slate-900 border border-slate-700/80 rounded-lg p-4">
@@ -226,13 +259,37 @@
     </section>
   </main>
 
+  <!-- AUTHOR AUTH PASSCODE MODAL -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 shadow-2xl space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-amber-900/50 border border-amber-700 text-amber-400 flex items-center justify-center mx-auto text-xl">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-100">Author Mode Authentication</h3>
+        <p class="text-xs text-slate-400 mt-1">Enter your Author Passcode to enable editing, chapter additions, and API execution.</p>
+      </div>
+
+      <div>
+        <input id="auth-passcode-input" type="password" placeholder="Enter Author Passcode..." onkeyup="if(event.key==='Enter') submitAuthorAuth()"
+          class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-center text-slate-100 focus:outline-none focus:border-amber-500 font-mono tracking-widest">
+        <p id="auth-error-msg" class="text-[11px] text-rose-400 mt-1 hidden font-mono">Incorrect Passcode. Default is "1234".</p>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
+        <button onclick="toggleAuthModal(false)" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-md transition">Cancel</button>
+        <button onclick="submitAuthorAuth()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-md transition">Unlock Author Mode</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SETTINGS MODAL -->
   <div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl p-6 shadow-2xl space-y-5">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
         <h3 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
           <i class="fa-solid fa-key text-indigo-400"></i>
-          <span>AI Configuration Settings</span>
+          <span>Configuration & Security</span>
         </h3>
         <button onclick="toggleSettingsModal(false)" class="text-slate-400 hover:text-slate-200">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -240,29 +297,44 @@
       </div>
 
       <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Select AI Provider</label>
-          <select id="setting-provider" onchange="onProviderChange()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-            <option value="gemini" selected>Google Gemini (Free Tier available)</option>
-            <option value="groq">Groq (Fast Open Models)</option>
-            <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
-            <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet)</option>
-          </select>
+        
+        <!-- Author Passcode Setting -->
+        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+          <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">
+            <i class="fa-solid fa-shield-halved mr-1"></i> Author Passcode
+          </label>
+          <input id="setting-passcode" type="password" placeholder="Set Passcode (Default: 1234)..." 
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500 font-mono">
+          <p class="text-[11px] text-slate-500 mt-1">This passcode protects chapter editing and review execution from public visitors.</p>
         </div>
 
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Model Selection</label>
-          <select id="setting-model" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-            <!-- Populated dynamically based on provider -->
-          </select>
+        <!-- AI Provider & Key Settings (Author Mode Required) -->
+        <div id="settings-ai-section" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Select AI Provider</label>
+            <select id="setting-provider" onchange="onProviderChange()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+              <option value="gemini" selected>Google Gemini (Free Tier available)</option>
+              <option value="groq">Groq (Fast Open Models)</option>
+              <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
+              <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Model Selection</label>
+            <select id="setting-model" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+              <!-- Populated dynamically based on provider -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">API Key</label>
+            <input id="setting-api-key" type="password" placeholder="Paste your API key here..." 
+              class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 font-mono">
+            <p class="text-[11px] text-slate-500 mt-1">Keys are stored locally in your browser storage.</p>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">API Key</label>
-          <input id="setting-api-key" type="password" placeholder="Paste your API key here..." 
-            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 font-mono">
-          <p class="text-[11px] text-slate-500 mt-1">Your key is stored only in your browser's local storage and sent directly to the selected provider's official API.</p>
-        </div>
       </div>
 
       <div class="flex justify-end space-x-2 pt-3 border-t border-slate-700">
@@ -274,7 +346,8 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // LocalStorage Keys
+    // Storage Keys
+    const STORE_KEY_PASSCODE = "brs_author_passcode";
     const STORE_KEY_PROVIDER = "brs_provider";
     const STORE_KEY_MODEL = "brs_model";
     const STORE_KEY_CHAPTERS = "brs_book_chapters";
@@ -310,9 +383,11 @@
       ]
     };
 
-    let chapters = {}; // Map of chapterId -> chapterObj
+    // State Variables
+    let isAuthorMode = false;
+    let chapters = {};
     let activeChapterId = "";
-    let reviewResults = {}; // Active chapter's generated reviews
+    let reviewResults = {};
 
     // System Prompts for Each Agent
     const PERSONA_PROMPTS = {
@@ -357,11 +432,104 @@ Review this chapter from a skeptical, newcomer perspective:
 Format in markdown focusing on clarity, friction points, and accessibility.`
     };
 
-    // Initialize App
+    // Initialize Application
     window.addEventListener("DOMContentLoaded", () => {
       loadSettingsIntoUI();
       loadChaptersFromStorage();
+      applyAccessControlUI();
     });
+
+    // ACCESS CONTROL LOGIC (Reader Mode vs Author Mode)
+    function applyAccessControlUI() {
+      const modeBadge = document.getElementById("mode-badge");
+      const authToggleText = document.getElementById("auth-toggle-text");
+      const authToggleIcon = document.getElementById("auth-toggle-icon");
+      const authToggleBtn = document.getElementById("auth-toggle-btn");
+
+      const authorNewBtn = document.getElementById("author-new-chap-btn");
+      const authorDeleteBtn = document.getElementById("author-delete-chap-btn");
+      const runBtn = document.getElementById("run-btn");
+      const readerNotice = document.getElementById("reader-notice");
+      const saveStatus = document.getElementById("save-status");
+
+      // Input elements to toggle read-only / disabled state
+      const inputs = [
+        document.getElementById("chapter-title"),
+        document.getElementById("chapter-genre"),
+        document.getElementById("target-age-group"),
+        document.getElementById("chapter-text")
+      ];
+
+      const checkboxes = document.querySelectorAll("#agent-checkboxes-container input[type='checkbox']");
+
+      if (isAuthorMode) {
+        modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span class="text-emerald-400 font-bold">Author Mode (Unlocked)</span>`;
+        authToggleText.textContent = "Lock Author Mode";
+        authToggleIcon.className = "fa-solid fa-lock-open";
+        authToggleBtn.className = "bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg flex items-center space-x-1.5 transition shadow";
+
+        authorNewBtn.classList.remove("hidden");
+        authorNewBtn.classList.add("flex");
+        authorDeleteBtn.classList.remove("hidden");
+        runBtn.classList.remove("hidden");
+        runBtn.classList.add("flex");
+        readerNotice.classList.add("hidden");
+
+        saveStatus.textContent = "Auto-saved";
+        saveStatus.className = "text-[11px] text-slate-500 font-mono";
+
+        inputs.forEach(el => el.removeAttribute("disabled"));
+        checkboxes.forEach(cb => cb.removeAttribute("disabled"));
+
+      } else {
+        modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span><span class="text-amber-400 font-medium">Reader View</span>`;
+        authToggleText.textContent = "Author Login";
+        authToggleIcon.className = "fa-solid fa-lock";
+        authToggleBtn.className = "bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-lg flex items-center space-x-1.5 transition shadow";
+
+        authorNewBtn.classList.add("hidden");
+        authorNewBtn.classList.remove("flex");
+        authorDeleteBtn.classList.add("hidden");
+        runBtn.classList.add("hidden");
+        runBtn.classList.remove("flex");
+        readerNotice.classList.remove("hidden");
+
+        saveStatus.textContent = "Reader View (Read-Only)";
+        saveStatus.className = "text-[11px] text-slate-500 font-mono";
+
+        inputs.forEach(el => el.setAttribute("disabled", "true"));
+        checkboxes.forEach(cb => cb.setAttribute("disabled", "true"));
+      }
+    }
+
+    function toggleAuthorAuth() {
+      if (isAuthorMode) {
+        isAuthorMode = false;
+        applyAccessControlUI();
+      } else {
+        toggleAuthModal(true);
+      }
+    }
+
+    function toggleAuthModal(show) {
+      document.getElementById("auth-modal").classList.toggle("hidden", !show);
+      document.getElementById("auth-error-msg").classList.add("hidden");
+      document.getElementById("auth-passcode-input").value = "";
+      if (show) document.getElementById("auth-passcode-input").focus();
+    }
+
+    function submitAuthorAuth() {
+      const entered = document.getElementById("auth-passcode-input").value.trim();
+      const storedPass = localStorage.getItem(STORE_KEY_PASSCODE) || "1234";
+
+      if (entered === storedPass) {
+        isAuthorMode = true;
+        toggleAuthModal(false);
+        applyAccessControlUI();
+      } else {
+        document.getElementById("auth-error-msg").classList.remove("hidden");
+      }
+    }
 
     // CHAPTER & MANUSCRIPT STORAGE MANAGER
     function loadChaptersFromStorage() {
@@ -380,7 +548,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
           title: "Chapter 1: The Beginning",
           genre: "General Fiction",
           targetAge: "Adult (25-45 years)",
-          text: "",
+          text: "Rain fell in sheets over the luminescent spire of New Neo-Tokyo. Kael pulled his collar up against the chemical drizzle, adjusting the optical neural-implant over his left eye. He had twenty minutes before the Ministry patrol would scan the grid quadrant...",
           reviews: {}
         };
         activeChapterId = defaultId;
@@ -426,7 +594,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function autoSaveCurrentChapter() {
-      if (!activeChapterId || !chapters[activeChapterId]) return;
+      if (!isAuthorMode || !activeChapterId || !chapters[activeChapterId]) return;
 
       const chap = chapters[activeChapterId];
       chap.title = document.getElementById("chapter-title").value;
@@ -436,7 +604,6 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
 
       saveChaptersToStorage();
       
-      // Update dropdown option text live
       const selectOpt = document.querySelector(`#chapter-select option[value="${activeChapterId}"]`);
       if (selectOpt) selectOpt.textContent = chap.title || "Untitled Chapter";
 
@@ -447,6 +614,8 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function createNewChapter() {
+      if (!isAuthorMode) return;
+
       const newId = "chap_" + Date.now();
       const count = Object.keys(chapters).length + 1;
       chapters[newId] = {
@@ -471,6 +640,8 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function deleteCurrentChapter() {
+      if (!isAuthorMode) return;
+
       if (Object.keys(chapters).length <= 1) {
         alert("You must keep at least one chapter in your book project.");
         return;
@@ -520,7 +691,11 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       switchTab("all");
     }
 
-    // SETTINGS & API MODAL LOGIC
+    // SETTINGS MODAL
+    function openSettingsModal() {
+      toggleSettingsModal(true);
+    }
+
     function toggleSettingsModal(show) {
       document.getElementById("settings-modal").classList.toggle("hidden", !show);
       if (show) loadSettingsIntoUI();
@@ -543,6 +718,9 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function loadSettingsIntoUI() {
+      const savedPass = localStorage.getItem(STORE_KEY_PASSCODE) || "1234";
+      document.getElementById("setting-passcode").value = savedPass;
+
       const savedProvider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
       let savedModel = localStorage.getItem(STORE_KEY_MODEL) || "gemini-3.8-flash";
 
@@ -559,6 +737,11 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function saveSettings() {
+      const newPasscode = document.getElementById("setting-passcode").value.trim();
+      if (newPasscode) {
+        localStorage.setItem(STORE_KEY_PASSCODE, newPasscode);
+      }
+
       const provider = document.getElementById("setting-provider").value;
       let model = document.getElementById("setting-model").value;
       const apiKey = document.getElementById("setting-api-key").value.trim();
@@ -570,7 +753,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       localStorage.setItem(STORE_KEYS[provider], apiKey);
 
       toggleSettingsModal(false);
-      alert("Settings saved successfully!");
+      alert("Settings & Passcode saved successfully!");
     }
 
     // TAB SWITCHER
@@ -598,6 +781,11 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
 
     // MULTI-AGENT EXECUTION PIPELINE
     async function runAllReviews() {
+      if (!isAuthorMode) {
+        alert("Please unlock Author Mode to execute AI reviews.");
+        return;
+      }
+
       const provider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
       let model = localStorage.getItem(STORE_KEY_MODEL) || "gemini-3.8-flash";
       const apiKey = localStorage.getItem(STORE_KEYS[provider]) || "";
