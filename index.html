@@ -219,8 +219,8 @@
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Select AI Provider</label>
           <select id="setting-provider" onchange="onProviderChange()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-            <option value="groq">Groq (Fast Open Models - Free Tier)</option>
-            <option value="gemini">Google Gemini (Free tier available)</option>
+            <option value="gemini" selected>Google Gemini (Free tier available)</option>
+            <option value="groq">Groq (Fast Open Models)</option>
             <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
             <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet)</option>
           </select>
@@ -254,23 +254,24 @@
     const STORE_KEY_PROVIDER = "brs_provider";
     const STORE_KEY_MODEL = "brs_model";
     const STORE_KEYS = {
-      groq: "brs_api_key_groq",
       gemini: "brs_api_key_gemini",
+      groq: "brs_api_key_groq",
       openai: "brs_api_key_openai",
       anthropic: "brs_api_key_anthropic"
     };
 
     const MODEL_OPTIONS = {
+      gemini: [
+        { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Recommended)" },
+        { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Fast)" },
+        { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro" }
+      ],
       groq: [
         { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B (Recommended Flagship)" },
         { id: "openai/gpt-oss-20b", name: "GPT-OSS 20B (Fast / Lightweight)" },
-        { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B (High Performance)" },
+        { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B" },
         { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile" },
         { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant" }
-      ],
-      gemini: [
-        { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro (Recommended)" },
-        { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Fast)" }
       ],
       openai: [
         { id: "gpt-4o", name: "GPT-4o (High Performance)" },
@@ -356,22 +357,30 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     }
 
     function loadSettingsIntoUI() {
-      const savedProvider = localStorage.getItem(STORE_KEY_PROVIDER) || "groq";
-      const savedModel = localStorage.getItem(STORE_KEY_MODEL) || "openai/gpt-oss-120b";
+      const savedProvider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
+      let savedModel = localStorage.getItem(STORE_KEY_MODEL) || "gemini-2.5-flash";
+
+      // Sanitize legacy or prefixed model strings
+      savedModel = savedModel.replace(/^models\//, "");
 
       document.getElementById("setting-provider").value = savedProvider;
       onProviderChange();
       
-      // Ensure model selection exists in newly loaded provider list
+      // Ensure model selection exists in newly loaded provider list, fallback if invalid
       if (Array.from(document.getElementById("setting-model").options).some(o => o.value === savedModel)) {
         document.getElementById("setting-model").value = savedModel;
+      } else {
+        document.getElementById("setting-model").value = MODEL_OPTIONS[savedProvider][0].id;
       }
     }
 
     function saveSettings() {
       const provider = document.getElementById("setting-provider").value;
-      const model = document.getElementById("setting-model").value;
+      let model = document.getElementById("setting-model").value;
       const apiKey = document.getElementById("setting-api-key").value.trim();
+
+      // Clean model string
+      model = model.replace(/^models\//, "");
 
       localStorage.setItem(STORE_KEY_PROVIDER, provider);
       localStorage.setItem(STORE_KEY_MODEL, model);
@@ -406,9 +415,12 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
 
     // Trigger AI Reviews Across Selected Agents
     async function runAllReviews() {
-      const provider = localStorage.getItem(STORE_KEY_PROVIDER) || "groq";
-      const model = localStorage.getItem(STORE_KEY_MODEL) || "openai/gpt-oss-120b";
+      const provider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
+      let model = localStorage.getItem(STORE_KEY_MODEL) || "gemini-2.5-flash";
       const apiKey = localStorage.getItem(STORE_KEYS[provider]) || "";
+
+      // Sanitize model parameter
+      model = model.replace(/^models\//, "");
 
       if (!apiKey) {
         alert(`Please configure your ${provider.toUpperCase()} API Key in Settings first.`);
@@ -481,10 +493,10 @@ ${text}
       try {
         let responseMarkdown = "";
 
-        if (provider === "groq") {
-          responseMarkdown = await callGroqAPI(apiKey, model, systemPrompt, userPrompt);
-        } else if (provider === "gemini") {
+        if (provider === "gemini") {
           responseMarkdown = await callGeminiAPI(apiKey, model, systemPrompt, userPrompt);
+        } else if (provider === "groq") {
+          responseMarkdown = await callGroqAPI(apiKey, model, systemPrompt, userPrompt);
         } else if (provider === "openai") {
           responseMarkdown = await callOpenAIAPI(apiKey, model, systemPrompt, userPrompt);
         } else if (provider === "anthropic") {
@@ -505,6 +517,28 @@ ${text}
     }
 
     // API Handlers
+    async function callGeminiAPI(apiKey, model, systemPrompt, userPrompt) {
+      const cleanModel = model.replace(/^models\//, "");
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${apiKey}`;
+      
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ parts: [{ text: userPrompt }] }]
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `Gemini API HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.candidates[0].content.parts[0].text;
+    }
+
     async function callGroqAPI(apiKey, model, systemPrompt, userPrompt) {
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
@@ -529,29 +563,6 @@ ${text}
 
       const data = await response.json();
       return data.choices[0].message.content;
-    }
-
-    async function callGeminiAPI(apiKey, model, systemPrompt, userPrompt) {
-      // Strip 'models/' prefix if present
-      const cleanModel = model.replace(/^models\//, "");
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${apiKey}`;
-      
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemPrompt }] },
-          contents: [{ parts: [{ text: userPrompt }] }]
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `Gemini API HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
     }
 
     async function callOpenAIAPI(apiKey, model, systemPrompt, userPrompt) {
