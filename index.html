@@ -219,7 +219,7 @@
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Select AI Provider</label>
           <select id="setting-provider" onchange="onProviderChange()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-            <option value="groq">Groq (Fast / Llama 3 models - Free Tier available)</option>
+            <option value="groq">Groq (Fast Open Models - Free Tier)</option>
             <option value="gemini">Google Gemini (Free tier available)</option>
             <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
             <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet)</option>
@@ -262,9 +262,11 @@
 
     const MODEL_OPTIONS = {
       groq: [
-        { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile (Recommended)" },
-        { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant (Ultra-fast)" },
-        { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B" }
+        { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B (Recommended Flagship)" },
+        { id: "openai/gpt-oss-20b", name: "GPT-OSS 20B (Fast / Lightweight)" },
+        { id: "qwen/qwen3.8-27b", name: "Qwen 3.8 27B (High Performance)" },
+        { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile" },
+        { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant" }
       ],
       gemini: [
         { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro (Recommended)" },
@@ -355,11 +357,15 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
 
     function loadSettingsIntoUI() {
       const savedProvider = localStorage.getItem(STORE_KEY_PROVIDER) || "groq";
-      const savedModel = localStorage.getItem(STORE_KEY_MODEL) || "llama-3.3-70b-versatile";
+      const savedModel = localStorage.getItem(STORE_KEY_MODEL) || "openai/gpt-oss-120b";
 
       document.getElementById("setting-provider").value = savedProvider;
       onProviderChange();
-      document.getElementById("setting-model").value = savedModel;
+      
+      // Ensure model selection exists in newly loaded provider list
+      if (Array.from(document.getElementById("setting-model").options).some(o => o.value === savedModel)) {
+        document.getElementById("setting-model").value = savedModel;
+      }
     }
 
     function saveSettings() {
@@ -401,7 +407,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
     // Trigger AI Reviews Across Selected Agents
     async function runAllReviews() {
       const provider = localStorage.getItem(STORE_KEY_PROVIDER) || "groq";
-      const model = localStorage.getItem(STORE_KEY_MODEL) || "llama-3.3-70b-versatile";
+      const model = localStorage.getItem(STORE_KEY_MODEL) || "openai/gpt-oss-120b";
       const apiKey = localStorage.getItem(STORE_KEYS[provider]) || "";
 
       if (!apiKey) {
