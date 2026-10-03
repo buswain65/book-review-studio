@@ -1,825 +1,788 @@
-<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Review Studio - Multi-Agent Chapter Critique</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Marked.js for Markdown Rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        code, pre { font-family: 'JetBrains Mono', monospace; }
-        .prose p { margin-bottom: 0.75rem; line-height: 1.6; }
-        .prose h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; color: #f8fafc; }
-        .prose h4 { font-size: 1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.25rem; color: #38bdf8; }
-        .prose ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
-        .prose li { margin-bottom: 0.25rem; }
-        .prose blockquote { border-left: 3px solid #0284c7; padding-left: 0.75rem; color: #94a3b8; italic: true; margin: 0.75rem 0; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
-</head>
-<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Review Studio - Multi-AI Agent Feedback</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Marked.js for Markdown Rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- TOP NAVIGATION HEADER -->
-    <header class="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 flex items-center justify-between z-10 shrink-0">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+    .persona-card {
+      transition: all 0.2s ease-in-out;
+    }
+    .persona-card:hover {
+      transform: translateY(-2px);
+    }
+    .markdown-body h1 { font-size: 1.25rem; font-weight: 700; margin-top: 0.75rem; margin-bottom: 0.5rem; }
+    .markdown-body h2 { font-size: 1.1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.25rem; }
+    .markdown-body p { margin-bottom: 0.5rem; line-height: 1.5; }
+    .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+    .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+    .markdown-body blockquote { border-left: 3px solid #cbd5e1; padding-left: 0.75rem; color: #64748b; font-style: italic; }
+    .dark .markdown-body blockquote { border-left-color: #475569; color: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Title -->
         <div class="flex items-center space-x-3">
-            <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-sky-500/20">
-                <i class="fa-solid me-0 fa-book-open text-xl"></i>
+          <div class="p-2 bg-blue-600 text-white rounded-lg shadow-md">
+            <i class="fa-solid me-0 fa-book-open text-xl"></i>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Book Review Studio</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Multi-Persona AI Critic & Market Demographics Platform</p>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <!-- Active Provider Badge -->
+          <div id="activeProviderBadge" class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+            <i class="fa-solid fa-microchip mr-1.5 text-blue-500"></i>
+            <span id="badgeProviderName">Google Gemini</span>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button id="themeToggleBtn" onclick="toggleDarkMode()" title="Toggle Theme" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+            <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+          </button>
+
+          <!-- Settings Button -->
+          <button onclick="openSettingsModal()" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-900 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-3.5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+            <i class="fa-solid fa-sliders"></i>
+            <span class="hidden sm:inline">Settings</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT PANEL: Book Input & Demographics Config (4 Cols) -->
+    <section class="lg:col-span-4 flex flex-col space-y-5">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+          <h2 class="font-semibold text-base text-slate-900 dark:text-white flex items-center">
+            <i class="fa-solid fa-file-pen text-blue-500 mr-2"></i> Book Manuscript / Details
+          </h2>
+          <button onclick="loadSampleData()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+            Load Sample
+          </button>
+        </div>
+
+        <!-- Book Title Input -->
+        <div>
+          <label for="bookTitle" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Book Title</label>
+          <input type="text" id="bookTitle" placeholder="e.g. Echoes of the Silent Star" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+        </div>
+
+        <!-- Book Author Input -->
+        <div>
+          <label for="bookAuthor" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Author Name</label>
+          <input type="text" id="bookAuthor" placeholder="e.g. Jane Vance" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+        </div>
+
+        <!-- Genre Selection -->
+        <div>
+          <label for="bookGenre" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Genre</label>
+          <select id="bookGenre" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            <option value="Sci-Fi / Fantasy">Sci-Fi / Fantasy</option>
+            <option value="Literary Fiction">Literary Fiction</option>
+            <option value="Thriller / Mystery">Thriller / Mystery</option>
+            <option value="Romance / New Adult">Romance / New Adult</option>
+            <option value="Young Adult (YA)">Young Adult (YA)</option>
+            <option value="Non-Fiction / Self-Help">Non-Fiction / Self-Help</option>
+            <option value="Historical Fiction">Historical Fiction</option>
+          </select>
+        </div>
+
+        <!-- Target Demographics Slider -->
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
+          <div class="flex justify-between items-center mb-1">
+            <label for="targetDemographic" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Target Age Demographic</label>
+            <span id="demoAgeValue" class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-700 px-2 py-0.5 rounded">Young Adult (18-24)</span>
+          </div>
+          <input type="range" id="targetDemographic" min="1" max="5" value="2" oninput="updateDemographicLabel(this.value)" class="w-full accent-blue-600 cursor-pointer">
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+            <span>Teens (13-17)</span>
+            <span>YA (18-24)</span>
+            <span>Adult (25-39)</span>
+            <span>Mid (40-59)</span>
+            <span>Senior (60+)</span>
+          </div>
+        </div>
+
+        <!-- Manuscript / Excerpt / Synopsis Input -->
+        <div>
+          <label for="bookContent" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Synopsis or Chapter Excerpt</label>
+          <textarea id="bookContent" rows="8" placeholder="Paste synopsis, outline, or sample chapters here..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"></textarea>
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generateBtn" onclick="generateReviews()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Run All 5 AI Reviews</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Persona Tabs & Review Outputs (8 Cols) -->
+    <section class="lg:col-span-8 flex flex-col space-y-4">
+      
+      <!-- Persona Tabs Header -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-2 border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto flex space-x-1" id="personaTabsContainer">
+        <!-- Tabs generated dynamically by JS -->
+      </div>
+
+      <!-- Main Review Active Display Card -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex-1 flex flex-col overflow-hidden min-h-[500px]">
+        
+        <!-- Review Card Header -->
+        <div id="activePersonaHeader" class="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-3">
+            <div id="activePersonaIcon" class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 flex items-center justify-center text-lg font-bold">
+              <i class="fa-solid fa-user-ninja"></i>
             </div>
             <div>
-                <h1 class="font-bold text-lg text-slate-100 leading-tight">Book Review Studio</h1>
-                <p class="text-xs text-slate-400">Multi-Agent Editorial & Audience Evaluation Studio</p>
+              <h3 id="activePersonaName" class="font-bold text-slate-900 dark:text-white">Literary Scholar</h3>
+              <p id="activePersonaFocus" class="text-xs text-slate-500 dark:text-slate-400">Pacing, Prose Quality, Thematic Depth</p>
             </div>
-        </div>
+          </div>
 
-        <div class="flex items-center space-x-3">
-            <!-- API Status Badge -->
-            <button onclick="openApiModal()" id="api-status-btn" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                <span>API Key Missing</span>
+          <div class="flex items-center space-x-2">
+            <!-- Copy Output -->
+            <button onclick="copyCurrentReview()" title="Copy Markdown" class="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-sm transition">
+              <i class="fa-regular fa-copy"></i>
             </button>
-
-            <!-- Export Dropdown -->
-            <div class="relative inline-block text-left">
-                <button onclick="toggleExportMenu()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5">
-                    <i class="fa-solid fa-download"></i>
-                    <span>Export</span>
-                    <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                </button>
-                <div id="export-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl bg-slate-800 border border-slate-700 shadow-xl z-50 py-1 text-xs">
-                    <button onclick="exportReviews('markdown')" class="w-full text-left px-4 py-2 hover:bg-slate-700 text-slate-200 flex items-center space-x-2">
-                        <i class="fa-regular fa-file-lines text-sky-400"></i>
-                        <span>Export as Markdown (.md)</span>
-                    </button>
-                    <button onclick="exportReviews('json')" class="w-full text-left px-4 py-2 hover:bg-slate-700 text-slate-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-code text-indigo-400"></i>
-                        <span>Export as JSON</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Settings Button -->
-            <button onclick="openApiModal()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Settings">
-                <i class="fa-solid fa-gear"></i>
+            <!-- Export Review -->
+            <button onclick="exportCurrentReview()" title="Download Text" class="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-sm transition">
+              <i class="fa-solid fa-download"></i>
             </button>
+          </div>
         </div>
-    </header>
 
-    <!-- MAIN WORKSPACE CONTAINING SIDEBAR & FEEDBACK AREA -->
-    <main class="flex-1 flex overflow-hidden">
+        <!-- Review Output Content Body -->
+        <div class="p-6 flex-1 overflow-y-auto">
+          <!-- Placeholder State -->
+          <div id="emptyState" class="h-full flex flex-col items-center justify-center text-center py-16 text-slate-400">
+            <i class="fa-solid fa-newspaper text-5xl mb-4 text-slate-300 dark:text-slate-600"></i>
+            <p class="text-lg font-medium text-slate-600 dark:text-slate-300">No Review Generated Yet</p>
+            <p class="text-sm max-w-md mt-1">Configure your API key in Settings, fill in your manuscript details on the left, and click "Run All 5 AI Reviews".</p>
+          </div>
 
-        <!-- LEFT SIDEBAR: INPUT & CONTROLS -->
-        <aside class="w-full lg:w-[420px] xl:w-[460px] border-r border-slate-800 bg-slate-900/50 flex flex-col h-full shrink-0">
-            <div class="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+          <!-- Loading State Spinner -->
+          <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center text-center py-16">
+            <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+            <p id="loadingStatusText" class="text-base font-semibold text-slate-700 dark:text-slate-200">Analyzing manuscript with selected AI model...</p>
+            <p class="text-xs text-slate-400 mt-1">Evaluating plot hooks, demographic fit, and literary prose...</p>
+          </div>
 
-                <!-- Meta Configuration Section -->
-                <div class="space-y-3">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Manuscript Details</label>
-                    
-                    <div>
-                        <input type="text" id="chapter-title" placeholder="Chapter Title (e.g., Chapter 1: The Arrival)" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <input type="text" id="genre-context" placeholder="Genre / Tone (e.g. Sci-Fi / Dark Fantasy)" 
-                                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition">
-                        </div>
-                        <div>
-                            <select id="target-age" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 transition">
-                                <option value="" disabled selected>Target Consumer Age</option>
-                                <option value="Middle Grade (8–12)">Middle Grade (8–12)</option>
-                                <option value="Young Adult (12–18)">Young Adult (12–18)</option>
-                                <option value="New Adult (18–25)">New Adult (18–25)</option>
-                                <option value="Adult (25–45)">Adult (25–45)</option>
-                                <option value="Senior (45+)">Senior (45+)</option>
-                                <option value="All Ages">All Ages</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Textarea Chapter Input -->
-                <div class="space-y-2 flex flex-col flex-1">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Chapter Text</label>
-                        <span id="word-count" class="text-xs text-slate-500">0 words</span>
-                    </div>
-                    <textarea id="chapter-content" rows="12" placeholder="Paste your chapter prose here..."
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-sky-500 transition resize-none custom-scrollbar leading-relaxed font-normal"></textarea>
-                </div>
-
-                <!-- Active Personas Selection -->
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Review Personas</label>
-                        <button onclick="toggleAllPersonas()" class="text-xs text-sky-400 hover:text-sky-300">Toggle All</button>
-                    </div>
-
-                    <div class="space-y-2" id="persona-checkboxes">
-                        <!-- Persona Card Checkbox 1 -->
-                        <label class="flex items-start space-x-3 p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 cursor-pointer transition">
-                            <input type="checkbox" data-persona="publisher" checked class="mt-1 rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-sky-500">
-                            <div class="text-xs">
-                                <div class="font-semibold text-slate-200 flex items-center space-x-1.5">
-                                    <span>🏢</span> <span>Literary Publisher</span>
-                                </div>
-                                <div class="text-slate-400 text-[11px] mt-0.5">Evaluates commercial hooks, market fit, age positioning, and risk.</div>
-                            </div>
-                        </label>
-
-                        <!-- Persona Card Checkbox 2 -->
-                        <label class="flex items-start space-x-3 p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 cursor-pointer transition">
-                            <input type="checkbox" data-persona="editor" checked class="mt-1 rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-sky-500">
-                            <div class="text-xs">
-                                <div class="font-semibold text-slate-200 flex items-center space-x-1.5">
-                                    <span>✏️</span> <span>Developmental Editor</span>
-                                </div>
-                                <div class="text-slate-400 text-[11px] mt-0.5">Analyzes plot structure, pacing, vocabulary, and scene progression.</div>
-                            </div>
-                        </label>
-
-                        <!-- Persona Card Checkbox 3 -->
-                        <label class="flex items-start space-x-3 p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 cursor-pointer transition">
-                            <input type="checkbox" data-persona="writer" checked class="mt-1 rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-sky-500">
-                            <div class="text-xs">
-                                <div class="font-semibold text-slate-200 flex items-center space-x-1.5">
-                                    <span>✍️</span> <span>Peer Writer</span>
-                                </div>
-                                <div class="text-slate-400 text-[11px] mt-0.5">Critiques prose craft, voice, dialogue realism, and sensory details.</div>
-                            </div>
-                        </label>
-
-                        <!-- Persona Card Checkbox 4 -->
-                        <label class="flex items-start space-x-3 p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 cursor-pointer transition">
-                            <input type="checkbox" data-persona="target_fan" checked class="mt-1 rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-sky-500">
-                            <div class="text-xs">
-                                <div class="font-semibold text-slate-200 flex items-center space-x-1.5">
-                                    <span>📖</span> <span>Target Genre Fan</span>
-                                </div>
-                                <div class="text-slate-400 text-[11px] mt-0.5">Reviews emotional payoff, trope execution, and genre satisfaction.</div>
-                            </div>
-                        </label>
-
-                        <!-- Persona Card Checkbox 5 -->
-                        <label class="flex items-start space-x-3 p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 cursor-pointer transition">
-                            <input type="checkbox" data-persona="skeptic" checked class="mt-1 rounded bg-slate-900 border-slate-700 text-sky-500 focus:ring-sky-500">
-                            <div class="text-xs">
-                                <div class="font-semibold text-slate-200 flex items-center space-x-1.5">
-                                    <span>🤨</span> <span>Skeptical Reader</span>
-                                </div>
-                                <div class="text-slate-400 text-[11px] mt-0.5">Tests entry accessibility, clarity, exposition barriers, and flow.</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Trigger Button Bar -->
-            <div class="p-4 border-t border-slate-800 bg-slate-900 shrink-0">
-                <button id="run-btn" onclick="executeReviews()" class="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-sky-500/25 flex items-center justify-center space-x-2 transition">
-                    <i class="fa-solid fa-play text-sm"></i>
-                    <span>Run Selected Reviews</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- RIGHT WORKSPACE: AGENT FEEDBACK MATRIX -->
-        <section class="flex-1 flex flex-col h-full bg-slate-950 overflow-hidden">
-            
-            <!-- Filter Bar & Tabs -->
-            <div class="h-12 border-b border-slate-800 bg-slate-900/60 px-6 flex items-center justify-between shrink-0 overflow-x-auto custom-scrollbar">
-                <div class="flex items-center space-x-1" id="agent-tab-list">
-                    <button onclick="switchTab('all')" data-tab="all" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/30">
-                        All Personas
-                    </button>
-                    <!-- Individual tabs populated via JS -->
-                </div>
-                <div class="text-xs text-slate-500 shrink-0 hidden md:block" id="status-text">
-                    Ready to critique
-                </div>
-            </div>
-
-            <!-- Feedback Display Area -->
-            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar" id="reviews-container">
-                <!-- Placeholder / Empty State -->
-                <div id="empty-state" class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500">
-                    <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 mb-4">
-                        <i class="fa-solid fa-users-viewfinder text-2xl"></i>
-                    </div>
-                    <h3 class="text-slate-300 font-semibold text-base mb-1">No Reviews Generated Yet</h3>
-                    <p class="text-xs max-w-md text-slate-500">Paste your chapter content on the left, select your desired reviewer personas, and click 'Run Selected Reviews' to trigger parallel multi-agent evaluation.</p>
-                </div>
-
-                <!-- Grid view container for agent response cards -->
-                <div id="reviews-grid" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <!-- Cards added dynamically via JS -->
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- API KEY MODAL -->
-    <div id="api-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base font-bold text-slate-100 flex items-center space-x-2">
-                    <i class="fa-solid fa-key text-sky-400"></i>
-                    <span>Configure Gemini API Key</span>
-                </h3>
-                <button onclick="closeApiModal()" class="text-slate-400 hover:text-slate-200">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <p class="text-xs text-slate-400 leading-relaxed">
-                Your API key is saved safely in your local browser storage (<code class="text-sky-400">localStorage</code>) and never transmitted to external server infrastructure.
-            </p>
-
-            <div class="space-y-2">
-                <label class="block text-xs font-semibold text-slate-300">Gemini API Key</label>
-                <input type="password" id="api-key-input" placeholder="AIzaSy..." 
-                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-sky-500">
-            </div>
-
-            <div class="text-xs text-slate-500 flex items-center justify-between">
-                <span>Don't have a key?</span>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-sky-400 hover:underline flex items-center space-x-1">
-                    <span>Get a Gemini API Key</span>
-                    <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-            <div class="flex space-x-3 pt-2">
-                <button onclick="saveApiKey()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-medium py-2 rounded-lg text-xs transition">
-                    Save Key
-                </button>
-                <button onclick="closeApiModal()" class="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2 rounded-lg text-xs transition">
-                    Cancel
-                </button>
-            </div>
+          <!-- Output Rendered Markdown -->
+          <div id="reviewOutput" class="hidden markdown-body text-sm leading-relaxed text-slate-700 dark:text-slate-200"></div>
         </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800/80">
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center">
+          <i class="fa-solid fa-sliders text-blue-500 mr-2"></i> AI Provider & API Settings
+        </h3>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 space-y-5">
+
+        <!-- AI Provider Selection -->
+        <div>
+          <label for="aiProviderSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            Select AI Provider
+          </label>
+          <select id="aiProviderSelect" onchange="handleProviderChange()" class="w-full px-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic Claude</option>
+          </select>
+        </div>
+
+        <!-- AI Model Selection -->
+        <div>
+          <label for="aiModelSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            Select Model
+          </label>
+          <select id="aiModelSelect" class="w-full px-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+            <!-- Dynamically populated based on provider -->
+          </select>
+        </div>
+
+        <!-- API Key Input Field -->
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label for="apiKeyInput" id="apiKeyLabel" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              API Key
+            </label>
+            <a id="apiKeyHelpLink" href="#" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              Get Key <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+          <div class="relative">
+            <input type="password" id="apiKeyInput" placeholder="Paste API Key here..." class="w-full pl-3 pr-10 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono">
+            <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i id="keyVisibilityIcon" class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+            Keys are saved locally in browser storage and are never uploaded to intermediate servers.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-end space-x-3">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">
+          Cancel
+        </button>
+        <button onclick="saveSettings()" class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition">
+          Save Settings
+        </button>
+      </div>
+
     </div>
+  </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs shadow-2xl flex items-center space-x-2">
-        <i id="toast-icon" class="fa-solid fa-circle-info text-sky-400"></i>
-        <span id="toast-msg">Message here</span>
-    </div>
+  <script>
+    /* ==========================================================================
+       1. PERSONAS & MODELS DEFINITION
+       ========================================================================== */
+    const PERSONAS = [
+      {
+        id: 'scholar',
+        name: 'Literary Scholar',
+        focus: 'Pacing, Prose Quality & Thematic Depth',
+        icon: 'fa-graduation-cap',
+        prompt: 'You are an esteemed literary scholar and critic for prestigious literary journals. Focus on prose style, thematic resonance, narrative pacing, character arc progression, and overall artistic literary value. Provide structured feedback with constructive advice.'
+      },
+      {
+        id: 'commercial',
+        name: 'Commercial Agent',
+        focus: 'Marketability, Hooks & Sales Potential',
+        icon: 'fa-chart-line',
+        prompt: 'You are a top-tier literary agent focused on commercial blockbusters and bestselling fiction. Analyze the premise hook, market position, reader retention factors, genre tropes execution, and commercial adaptability.'
+      },
+      {
+        id: 'editor',
+        name: 'Developmental Editor',
+        focus: 'Structure, Plot Logic & Worldbuilding',
+        icon: 'fa-pen-nib',
+        prompt: 'You are an expert developmental editor. Evaluate structural integrity, plot holes, character motivation consistency, dialog authenticity, and worldbuilding execution. Be direct and actionable.'
+      },
+      {
+        id: 'target_reader',
+        name: 'Target Demographic Reader',
+        focus: 'Emotional Resonance & Reader Engagement',
+        icon: 'fa-heart',
+        prompt: 'You represent an avid reader within the specified target age demographic. Share your genuine emotional reaction, engagement level, relatable elements, and whether you would recommend this book to your peer group.'
+      },
+      {
+        id: 'harsh_critic',
+        name: 'Tough Reviewer',
+        focus: 'Critical Flaws & Potential Backlash',
+        icon: 'fa-masks-theater',
+        prompt: 'You are a tough, no-nonsense book reviewer known for sharp honesty. Identify cliché tropes, pacing lags, weak plot points, and areas where picky readers will disengage. Keep it constructive yet unvarnished.'
+      }
+    ];
 
-    <!-- APPLICATION JAVASCRIPT LOGIC -->
-    <script>
-        /* PERSONA PROMPTS DEFINITIONS */
-        const PERSONAS = {
-            publisher: {
-                id: 'publisher',
-                name: 'Literary Publisher',
-                icon: '🏢',
-                color: 'sky',
-                systemPrompt: `You are a Senior Acquisitions Editor & Commercial Publisher at a top-tier publishing house.
-Your goal is to evaluate commercial viability, pitch hooks, positioning, and target consumer appeal.
+    const PROVIDERS = {
+      gemini: {
+        name: 'Google Gemini',
+        helpUrl: 'https://aistudio.google.com/app/apikey',
+        models: [
+          { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+          { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
+        ]
+      },
+      openai: {
+        name: 'OpenAI',
+        helpUrl: 'https://platform.openai.com/api-keys',
+        models: [
+          { id: 'gpt-4o', name: 'GPT-4o' },
+          { id: 'gpt-4o-mini', name: 'GPT-4o-mini' }
+        ]
+      },
+      anthropic: {
+        name: 'Anthropic Claude',
+        helpUrl: 'https://console.anthropic.com/settings/keys',
+        models: [
+          { id: 'claude-3-5-sonnet-20240620', name: 'Claude 3.5 Sonnet' },
+          { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' }
+        ]
+      }
+    };
 
-CRITICAL REQUIREMENT: You MUST include a specific detected target consumer age range (e.g. 14-18, 18-28, 25-45) and compare it directly to the author's specified target.
+    /* ==========================================================================
+       2. STATE MANAGEMENT
+       ========================================================================== */
+    let activePersonaId = 'scholar';
+    let generatedReviews = {}; // Holds { scholar: "markdown", commercial: "markdown", ... }
+    
+    // Application settings object saved in LocalStorage
+    let appSettings = {
+      provider: 'gemini',
+      model: 'gemini-1.5-pro',
+      apiKeys: {
+        gemini: '',
+        openai: '',
+        anthropic: ''
+      }
+    };
 
-Analyze the chapter and provide feedback structured using Markdown:
-### 1. 📊 Commercial Age & Demographic Assessment
-- **Detected Consumer Age Range**: [Provide exact age bracket, e.g. "18-28 years"]
-- **Target Demographic Match**: [High / Moderate / Low alignment score with reasoning]
+    /* ==========================================================================
+       3. INITIALIZATION & STORAGE
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSettings();
+      renderPersonaTabs();
+      updateActiveProviderBadge();
+      initTheme();
+    });
 
-### 2. 🎣 Hook & Opening Strength
-Evaluating the first 500 words and overall narrative hook strength.
+    function loadSettings() {
+      const saved = localStorage.getItem('book_review_studio_settings');
+      if (saved) {
+        try {
+          appSettings = JSON.parse(saved);
+        } catch (e) {
+          console.error("Error parsing saved settings:", e);
+        }
+      }
+    }
 
-### 3. 📈 Market Positioning & Genre Fit
-Comparison to current commercial market trends and reader expectations.
+    function saveSettingsToStorage() {
+      localStorage.setItem('book_review_studio_settings', JSON.stringify(appSettings));
+      updateActiveProviderBadge();
+    }
 
-### 4. ⚠️ Commercial Risks & Opportunities
-Key hurdles to marketability and suggested enhancements.`
-            },
-            editor: {
-                id: 'editor',
-                name: 'Developmental Editor',
-                icon: '✏️',
-                color: 'indigo',
-                systemPrompt: `You are an expert Developmental Editor specializing in narrative structure, character arcs, and prose mechanics.
-Your focus is scene construction, pacing, structural consistency, and vocabulary appropriateness.
+    function updateActiveProviderBadge() {
+      const badge = document.getElementById('badgeProviderName');
+      const provName = PROVIDERS[appSettings.provider]?.name || 'Gemini';
+      const modelName = appSettings.model;
+      badge.textContent = `${provName} (${modelName})`;
+    }
 
-CRITICAL REQUIREMENT: Evaluate the prose complexity and theme maturity to determine the recommended reader age level.
+    /* ==========================================================================
+       4. UI TAB & MODAL HANDLERS
+       ========================================================================== */
+    function renderPersonaTabs() {
+      const container = document.getElementById('personaTabsContainer');
+      container.innerHTML = PERSONAS.map(p => `
+        <button id="tab-${p.id}" onclick="switchPersonaTab('${p.id}')" 
+          class="flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${p.id === activePersonaId ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}">
+          <i class="fa-solid ${p.icon}"></i>
+          <span>${p.name}</span>
+          <span id="badge-status-${p.id}" class="hidden w-2 h-2 rounded-full bg-emerald-400 ml-1"></span>
+        </button>
+      `).join('');
+    }
 
-Analyze the chapter and provide feedback structured using Markdown:
-### 1. 📊 Structural Reading Level & Age Suitability
-- **Detected Consumer Age Range**: [Provide exact age bracket based on prose/themes, e.g. "12-16 years"]
-- **Vocabulary & Theme Complexity**: [Assessment of prose readability vs target audience]
+    function switchPersonaTab(id) {
+      activePersonaId = id;
+      renderPersonaTabs();
 
-### 2. 🎬 Scene Architecture & Pacing
-Analysis of scene goals, tension, pacing dynamics, and momentum.
+      const persona = PERSONAS.find(p => p.id === id);
+      document.getElementById('activePersonaName').textContent = persona.name;
+      document.getElementById('activePersonaFocus').textContent = persona.focus;
+      document.getElementById('activePersonaIcon').innerHTML = `<i class="fa-solid ${persona.icon}"></i>`;
 
-### 3. 🎭 Character Consistency & Motivation
-Evaluation of character choices, emotional realism, and internal logic.
+      // Update output display
+      const outputDiv = document.getElementById('reviewOutput');
+      const emptyDiv = document.getElementById('emptyState');
 
-### 4. 🔧 Key Developmental Recommendations
-Actionable structural revisions.`
-            },
-            writer: {
-                id: 'writer',
-                name: 'Peer Writer',
-                icon: '✍️️',
-                color: 'emerald',
-                systemPrompt: `You are a published, award-winning Author acting as a Critique Partner.
-Your perspective focuses on line craft, dialogue rhythm, sensory imagery, and authorial voice.
+      if (generatedReviews[id]) {
+        emptyDiv.classList.add('hidden');
+        outputDiv.classList.remove('hidden');
+        outputDiv.innerHTML = marked.parse(generatedReviews[id]);
+      } else {
+        outputDiv.classList.add('hidden');
+        emptyDiv.classList.remove('hidden');
+      }
+    }
 
-CRITICAL REQUIREMENT: Assess the prose tone and maturity to gauge the ideal age appeal from a fellow craft practitioner.
+    function openSettingsModal() {
+      document.getElementById('aiProviderSelect').value = appSettings.provider;
+      handleProviderChange(); // Populates models & API keys
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
 
-Analyze the chapter and provide feedback structured using Markdown:
-### 1. 📊 Prose Tone & Craft Age Appeal
-- **Detected Consumer Age Range**: [Provide estimated reader age appeal, e.g. "20-35 years"]
-- **Voice Resonance**: [How the narrative voice speaks to this audience]
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
 
-### 2. 💬 Dialogue & Character Voice
-Natural cadence, subtext, and distinction between character voices.
+    function handleProviderChange() {
+      const providerKey = document.getElementById('aiProviderSelect').value;
+      const providerObj = PROVIDERS[providerKey];
 
-### 3. 🎨 Sensory Worldbuilding & Line Craft
-Praise for standout phrasing and sticky/awkward passages that need smoothing.
+      // Update Model Dropdown
+      const modelSelect = document.getElementById('aiModelSelect');
+      modelSelect.innerHTML = providerObj.models.map(m => `
+        <option value="${m.id}">${m.name}</option>
+      `).join('');
 
-### 4. 💡 Craft Tips & Line Highlights
-Specific stylistic suggestions.`
-            },
-            target_fan: {
-                id: 'target_fan',
-                name: 'Target Genre Fan',
-                icon: '📖',
-                color: 'amber',
-                systemPrompt: `You are an avid reader who reads 50+ books a year exclusively in this genre.
-You care deeply about genre tropes, emotional payoff, satisfying character dynamics, and immersive enjoyment.
+      // Set model to current setting if valid for provider
+      if (appSettings.provider === providerKey && appSettings.model) {
+        modelSelect.value = appSettings.model;
+      }
 
-CRITICAL REQUIREMENT: Tell the author straight up if this fits your reading demographic and age group interest.
+      // Update Key Field
+      const keyInput = document.getElementById('apiKeyInput');
+      keyInput.value = appSettings.apiKeys[providerKey] || '';
+      
+      // Update Help Link
+      const helpLink = document.getElementById('apiKeyHelpLink');
+      helpLink.href = providerObj.helpUrl;
+    }
 
-Analyze the chapter and provide feedback structured using Markdown:
-### 1. 📊 Reader Age Alignment & Satisfaction
-- **Detected Consumer Age Range**: [Provide your estimated reader age group, e.g. "16-24 years"]
-- **Genre Satisfaction Score**: [1-10 Rating with emotional justification]
+    function saveSettings() {
+      const providerKey = document.getElementById('aiProviderSelect').value;
+      const modelKey = document.getElementById('aiModelSelect').value;
+      const keyVal = document.getElementById('apiKeyInput').value.trim();
 
-### 2. ❤️ What I Loved (Favorite Moments)
-Moments that triggered excitement, curiosity, or emotional attachment.
+      appSettings.provider = providerKey;
+      appSettings.model = modelKey;
+      appSettings.apiKeys[providerKey] = keyVal;
 
-### 3. 🎯 Trope Execution & Expectation Check
-How well genre tropes are handled (subverted vs. executed well).
+      saveSettingsToStorage();
+      closeSettingsModal();
+    }
 
-### 4. ⏩ "Did I Want to Keep Reading?" Verdict
-Honest reader reaction and willingness to buy the full book.`
-            },
-            skeptic: {
-                id: 'skeptic',
-                name: 'Skeptical Reader',
-                icon: '🤨',
-                color: 'rose',
-                systemPrompt: `You are a reader who rarely reads this genre, approaching the story with a critical eye for clarity, accessibility, and exposition barriers.
-You hate info-dumps, confusing jargon, or slow openings that assume prior genre familiarity.
+    function toggleApiKeyVisibility() {
+      const input = document.getElementById('apiKeyInput');
+      const icon = document.getElementById('keyVisibilityIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
 
-CRITICAL REQUIREMENT: Gauge if the story is accessible to a broader age demographic outside the niche.
+    function updateDemographicLabel(val) {
+      const labels = {
+        '1': 'Teen / YA (13-17)',
+        '2': 'Young Adult (18-24)',
+        '3': 'Adult Fiction (25-39)',
+        '4': 'Mid-Adult (40-59)',
+        '5': 'Mature Reader (60+)'
+      };
+      document.getElementById('demoAgeValue').textContent = labels[val] || '';
+    }
 
-Analyze the chapter and provide feedback structured using Markdown:
-### 1. 📊 Accessibility & Age Readiness
-- **Detected Consumer Age Range**: [Broader accessible age range, e.g. "18+ general reader"]
-- **Barrier to Entry Score**: [Low / Moderate / High barrier]
+    function loadSampleData() {
+      document.getElementById('bookTitle').value = "The Quantum Apothecary";
+      document.getElementById('bookAuthor').value = "Elena Rostova";
+      document.getElementById('bookGenre').value = "Sci-Fi / Fantasy";
+      document.getElementById('targetDemographic').value = "3";
+      updateDemographicLabel("3");
+      document.getElementById('bookContent').value = `In a subterranean London lit only by bio-luminescent moss, Dr. Silas Vance distills memories into ingestible elixirs. When a high-ranking Ministry official arrives demanding a tincture to eradicate all recollections of a botched rebellion, Silas discovers the official's daughter was the architect of the uprisings—and Silas's own long-forgotten sister. Silas must decide whether to erase her legacy to save her life or preserve her memory and trigger a revolution.`;
+    }
 
-### 2. ❓ Confusion Matrix & Exposition Check
-Where did you feel lost, alienated, or bored by over-explanation?
+    /* ==========================================================================
+       5. UNIFIED MULTI-PROVIDER API FETCH ENGINE
+       ========================================================================== */
+    async function generateReviews() {
+      const currentApiKey = appSettings.apiKeys[appSettings.provider];
 
-### 3. 🌟 Surprising Positives
-What elements managed to grab your interest despite your skepticism?
+      if (!currentApiKey) {
+        openSettingsModal();
+        alert(`Please enter a valid API key for ${PROVIDERS[appSettings.provider].name} in the Settings menu.`);
+        return;
+      }
 
-### 4. 🚀 Recommendations for Accessibility
-How to make this story more compelling to a wider audience.`
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const genre = document.getElementById('bookGenre').value;
+      const demoVal = document.getElementById('targetDemographic').value;
+      const demoText = document.getElementById('demoAgeValue').textContent;
+      const content = document.getElementById('bookContent').value.trim();
+
+      if (!title || !content) {
+        alert("Please provide at least a Book Title and Manuscript/Synopsis content.");
+        return;
+      }
+
+      // Show Loading State
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('reviewOutput').classList.add('hidden');
+      document.getElementById('loadingState').classList.remove('hidden');
+
+      const genBtn = document.getElementById('generateBtn');
+      genBtn.disabled = true;
+      genBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      // Dispatch parallel API requests for all 5 personas
+      const reviewPromises = PERSONAS.map(persona => {
+        return fetchSinglePersonaReview(persona, { title, author, genre, demoText, content }, currentApiKey)
+          .then(result => ({ id: persona.id, text: result }))
+          .catch(err => ({ id: persona.id, text: `**Error generating review:** ${err.message}` }));
+      });
+
+      try {
+        const results = await Promise.all(reviewPromises);
+        results.forEach(res => {
+          generatedReviews[res.id] = res.text;
+          const statusDot = document.getElementById(`badge-status-${res.id}`);
+          if (statusDot) statusDot.classList.remove('hidden');
+        });
+
+        // Display current persona output
+        switchPersonaTab(activePersonaId);
+
+      } catch (err) {
+        alert(`Failed to execute AI review queries: ${err.message}`);
+      } finally {
+        document.getElementById('loadingState').classList.add('hidden');
+        genBtn.disabled = false;
+        genBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    async function fetchSinglePersonaReview(persona, bookData, apiKey) {
+      const systemPrompt = `${persona.prompt}\nTarget Demographic Focus: ${bookData.demoText}.\nGenre Context: ${bookData.genre}. Provide a structured critique covering Strengths, Weaknesses, Structural Recommendations, and a Final Verdict score out of 10.`;
+      
+      const userPrompt = `Book Title: "${bookData.title}"\nAuthor: "${bookData.author || 'Unknown'}"\nGenre: ${bookData.genre}\nTarget Audience: ${bookData.demoText}\n\nManuscript / Synopsis:\n${bookData.content}`;
+
+      const provider = appSettings.provider;
+      const model = appSettings.model;
+
+      if (provider === 'gemini') {
+        return callGeminiAPI(systemPrompt, userPrompt, model, apiKey);
+      } else if (provider === 'openai') {
+        return callOpenAIAPI(systemPrompt, userPrompt, model, apiKey);
+      } else if (provider === 'anthropic') {
+        return callAnthropicAPI(systemPrompt, userPrompt, model, apiKey);
+      } else {
+        throw new Error("Unsupported AI Provider selected.");
+      }
+    }
+
+    /* --- Provider Direct Fetch Implementations --- */
+
+    async function callGeminiAPI(systemPrompt, userPrompt, model, apiKey) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }]
             }
-        };
+          ]
+        })
+      });
 
-        /* STATE MANAGEMENT */
-        let state = {
-            apiKey: '',
-            activeTab: 'all',
-            reviews: {},
-            isGenerating: false
-        };
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Gemini API call failed");
+      }
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response received from Gemini.";
+    }
 
-        /* INITIALIZATION */
-        window.onload = function() {
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if (savedKey) {
-                state.apiKey = savedKey;
-                updateApiStatusBadge(true);
-            } else {
-                updateApiStatusBadge(false);
-            }
+    async function callOpenAIAPI(systemPrompt, userPrompt, model, apiKey) {
+      const url = 'https://api.openai.com/v1/chat/completions';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.7
+        })
+      });
 
-            // Word count tracking
-            const chapterContent = document.getElementById('chapter-content');
-            chapterContent.addEventListener('input', updateWordCount);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || "OpenAI API call failed");
+      }
+      return data.choices?.[0]?.message?.content || "No response received from OpenAI.";
+    }
 
-            // Close export dropdown on outside click
-            window.addEventListener('click', (e) => {
-                const exportMenu = document.getElementById('export-menu');
-                if (!e.target.closest('.relative')) {
-                    exportMenu.classList.add('hidden');
-                }
-            });
-        };
+    async function callAnthropicAPI(systemPrompt, userPrompt, model, apiKey) {
+      const url = 'https://api.anthropic.com/v1/messages';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'dangerously-allow-browser': 'true' // Required for direct browser calls to Anthropic
+        },
+        body: JSON.stringify({
+          model: model,
+          max_tokens: 2000,
+          system: systemPrompt,
+          messages: [
+            { role: 'user', content: userPrompt }
+          ]
+        })
+      });
 
-        function updateWordCount() {
-            const text = document.getElementById('chapter-content').value.trim();
-            const words = text ? text.split(/\s+/).length : 0;
-            document.getElementById('word-count').innerText = `${words.toLocaleString()} words`;
-        }
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Anthropic API call failed");
+      }
+      return data.content?.[0]?.text || "No response received from Anthropic.";
+    }
 
-        /* MODAL & API KEY HANDLERS */
-        function openApiModal() {
-            document.getElementById('api-key-input').value = state.apiKey;
-            document.getElementById('api-modal').classList.remove('hidden');
-        }
+    /* ==========================================================================
+       6. UTILITIES (COPY, EXPORT & THEME)
+       ========================================================================== */
+    function copyCurrentReview() {
+      const content = generatedReviews[activePersonaId];
+      if (!content) return;
+      
+      const el = document.createElement('textarea');
+      el.value = content;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
 
-        function closeApiModal() {
-            document.getElementById('api-modal').classList.add('hidden');
-        }
+      alert("Review copied to clipboard!");
+    }
 
-        function saveApiKey() {
-            const key = document.getElementById('api-key-input').value.trim();
-            state.apiKey = key;
-            localStorage.setItem('gemini_api_key', key);
-            updateApiStatusBadge(!!key);
-            closeApiModal();
-            showToast(key ? 'API Key saved successfully' : 'API Key cleared');
-        }
+    function exportCurrentReview() {
+      const content = generatedReviews[activePersonaId];
+      if (!content) return;
 
-        function updateApiStatusBadge(hasKey) {
-            const btn = document.getElementById('api-status-btn');
-            if (hasKey) {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition flex items-center space-x-2";
-                btn.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>API Key Set</span>`;
-            } else {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition flex items-center space-x-2";
-                btn.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>API Key Missing</span>`;
-            }
-        }
+      const persona = PERSONAS.find(p => p.id === activePersonaId);
+      const title = document.getElementById('bookTitle').value || 'Manuscript';
+      const filename = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${persona.id}_review.md`;
 
-        /* UI CONTROLS */
-        function toggleAllPersonas() {
-            const checkboxes = document.querySelectorAll('#persona-checkboxes input[type="checkbox"]');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !allChecked);
-        }
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
 
-        function toggleExportMenu() {
-            document.getElementById('export-menu').classList.toggle('hidden');
-        }
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const icon = document.getElementById('themeIcon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
 
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            toastMsg.innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        /* MAIN EXECUTION WORKFLOW */
-        async function executeReviews() {
-            if (!state.apiKey) {
-                showToast('Please set your Gemini API key first.', 'error');
-                openApiModal();
-                return;
-            }
-
-            const chapterTitle = document.getElementById('chapter-title').value.trim() || 'Untitled Chapter';
-            const genreContext = document.getElementById('genre-context').value.trim() || 'General Fiction';
-            const targetAge = document.getElementById('target-age').value || 'Unspecified';
-            const chapterContent = document.getElementById('chapter-content').value.trim();
-
-            if (!chapterContent) {
-                showToast('Please enter chapter text to review.', 'error');
-                return;
-            }
-
-            // Determine active persona checkboxes
-            const selectedPersonas = Array.from(document.querySelectorAll('#persona-checkboxes input[type="checkbox"]:checked'))
-                .map(cb => cb.dataset.persona);
-
-            if (selectedPersonas.length === 0) {
-                showToast('Please select at least one reviewer persona.', 'error');
-                return;
-            }
-
-            // Set Loading UI State
-            state.isGenerating = true;
-            document.getElementById('run-btn').disabled = true;
-            document.getElementById('run-btn').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('status-text').innerText = `Running ${selectedPersonas.length} reviews in parallel...`;
-            
-            // Prepare Containers
-            document.getElementById('empty-state').classList.add('hidden');
-            const grid = document.getElementById('reviews-grid');
-            grid.classList.remove('hidden');
-            grid.innerHTML = '';
-            state.reviews = {};
-
-            // Build Agent Tabs
-            buildTabs(selectedPersonas);
-
-            // Initialize Cards with Skeleton Loading State
-            selectedPersonas.forEach(personaKey => {
-                const persona = PERSONAS[personaKey];
-                grid.appendChild(createSkeletonCard(persona));
-            });
-
-            // Trigger Parallel LLM Calls
-            const promises = selectedPersonas.map(personaKey => 
-                runSingleAgentReview(personaKey, chapterTitle, genreContext, targetAge, chapterContent)
-            );
-
-            await Promise.allSettled(promises);
-
-            // Reset Run Button State
-            state.isGenerating = false;
-            document.getElementById('run-btn').disabled = false;
-            document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
-            document.getElementById('status-text').innerText = 'All critiques completed';
-            showToast('Review generation completed!');
-        }
-
-        /* SINGLE AGENT CALL TO GEMINI API */
-        async function runSingleAgentReview(personaKey, title, genre, targetAge, content) {
-            const persona = PERSONAS[personaKey];
-            const cardEl = document.getElementById(`card-${personaKey}`);
-
-            const userPrompt = `
-MANUSCRIPT METADATA:
-- Chapter Title: ${title}
-- Target Genre / Context: ${genre}
-- Author's Target Consumer Age Group: ${targetAge}
-
-CHAPTER PROSE TO REVIEW:
----
-${content}
----
-
-Provide your comprehensive critique from your persona perspective following your instructed formatting.
-`;
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${state.apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: persona.systemPrompt }] }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error?.message || 'API request failed');
-                }
-
-                const data = await response.json();
-                const reviewText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response returned.';
-
-                // Parse detected age range from response
-                const detectedAge = extractAgeRange(reviewText) || 'Age not specified';
-
-                // Save result
-                state.reviews[personaKey] = {
-                    persona: persona,
-                    text: reviewText,
-                    detectedAge: detectedAge,
-                    targetAge: targetAge
-                };
-
-                // Render Final Card Content
-                renderCardContent(personaKey, persona, reviewText, detectedAge, targetAge);
-
-            } catch (error) {
-                console.error(`Error generating review for ${persona.name}:`, error);
-                renderCardError(personaKey, persona, error.message);
-            }
-        }
-
-        function extractAgeRange(text) {
-            // Regex to grab "Detected Consumer Age Range" string
-            const match = text.match(/Detected Consumer Age Range\*\*:\s*([^\n\r*]+)/i);
-            return match ? match[1].trim() : null;
-        }
-
-        function createSkeletonCard(persona) {
-            const card = document.createElement('div');
-            card.id = `card-${persona.id}`;
-            card.className = `review-card border border-slate-800 bg-slate-900 rounded-2xl p-5 flex flex-col space-y-4 shadow-xl`;
-            card.innerHTML = `
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2.5">
-                        <span class="text-xl">${persona.icon}</span>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-sm">${persona.name}</h3>
-                            <span class="text-[11px] text-slate-400 animate-pulse">Analyzing chapter...</span>
-                        </div>
-                    </div>
-                    <div class="w-5 h-5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-                <div class="space-y-3 animate-pulse">
-                    <div class="h-4 bg-slate-800 rounded w-3/4"></div>
-                    <div class="h-3 bg-slate-800/60 rounded w-full"></div>
-                    <div class="h-3 bg-slate-800/60 rounded w-5/6"></div>
-                    <div class="h-3 bg-slate-800/60 rounded w-2/3"></div>
-                </div>
-            `;
-            return card;
-        }
-
-        function renderCardContent(personaKey, persona, markdownText, detectedAge, targetAge) {
-            const card = document.getElementById(`card-${personaKey}`);
-            if (!card) return;
-
-            const htmlContent = marked.parse(markdownText);
-
-            card.innerHTML = `
-                <!-- Card Header -->
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2.5">
-                        <span class="text-xl">${persona.icon}</span>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-sm">${persona.name}</h3>
-                            <span class="text-[11px] text-emerald-400 flex items-center space-x-1">
-                                <i class="fa-solid fa-check text-[10px]"></i>
-                                <span>Critique Complete</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Age Range Demographic Badge Banner -->
-                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div class="flex items-center space-x-1.5">
-                        <span class="text-slate-400">Target Age:</span>
-                        <span class="font-medium text-slate-200 bg-slate-800 px-2 py-0.5 rounded-md">${targetAge}</span>
-                    </div>
-                    <div class="flex items-center space-x-1.5">
-                        <span class="text-slate-400">Detected Consumer Age:</span>
-                        <span class="font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-md">${detectedAge}</span>
-                    </div>
-                </div>
-
-                <!-- Markdown Content Body -->
-                <div class="prose text-xs text-slate-300 leading-relaxed overflow-x-auto">
-                    ${htmlContent}
-                </div>
-            `;
-        }
-
-        function renderCardError(personaKey, persona, errorMessage) {
-            const card = document.getElementById(`card-${personaKey}`);
-            if (!card) return;
-
-            card.innerHTML = `
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2.5">
-                        <span class="text-xl">${persona.icon}</span>
-                        <div>
-                            <h3 class="font-bold text-slate-100 text-sm">${persona.name}</h3>
-                            <span class="text-[11px] text-rose-400">Review Failed</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300">
-                    <p class="font-semibold mb-1"><i class="fa-solid fa-circle-exclamation"></i> Error generating critique</p>
-                    <p class="opacity-80">${errorMessage}</p>
-                </div>
-            `;
-        }
-
-        /* TAB FILTERING */
-        function buildTabs(activePersonaKeys) {
-            const container = document.getElementById('agent-tab-list');
-            container.innerHTML = `
-                <button onclick="switchTab('all')" data-tab="all" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/30">
-                    All Personas
-                </button>
-            `;
-
-            activePersonaKeys.forEach(key => {
-                const persona = PERSONAS[key];
-                const btn = document.createElement('button');
-                btn.onclick = () => switchTab(key);
-                btn.dataset.tab = key;
-                btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800 transition flex items-center space-x-1.5";
-                btn.innerHTML = `<span>${persona.icon}</span> <span>${persona.name}</span>`;
-                container.appendChild(btn);
-            });
-        }
-
-        function switchTab(tabKey) {
-            state.activeTab = tabKey;
-            
-            // Highlight Tab Buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                if (btn.dataset.tab === tabKey) {
-                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/30";
-                } else {
-                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800 transition";
-                }
-            });
-
-            // Show/Hide Review Cards
-            document.querySelectorAll('.review-card').forEach(card => {
-                if (tabKey === 'all' || card.id === `card-${tabKey}`) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        }
-
-        /* EXPORT FUNCTIONALITY */
-        function exportReviews(format) {
-            if (Object.keys(state.reviews).length === 0) {
-                showToast('No generated reviews available to export.', 'error');
-                return;
-            }
-
-            const chapterTitle = document.getElementById('chapter-title').value.trim() || 'Untitled Chapter';
-            const targetAge = document.getElementById('target-age').value || 'Unspecified';
-
-            if (format === 'markdown') {
-                let md = `# Editorial Review Report: ${chapterTitle}\n`;
-                md += `*Target Consumer Age Demographic: ${targetAge}*\n`;
-                md += `*Generated via Book Review Studio on ${new Date().toLocaleDateString()}*\n\n---\n\n`;
-
-                Object.values(state.reviews).forEach(item => {
-                    md += `## ${item.persona.icon} ${item.persona.name}\n`;
-                    md += `**Author Target Age**: ${item.targetAge} | **Detected Consumer Age**: ${item.detectedAge}\n\n`;
-                    md += `${item.text}\n\n---\n\n`;
-                });
-
-                downloadFile(`${chapterTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_reviews.md`, md, 'text/markdown');
-            } else if (format === 'json') {
-                const data = {
-                    chapterTitle: chapterTitle,
-                    targetAge: targetAge,
-                    generatedAt: new Date().toISOString(),
-                    reviews: state.reviews
-                };
-                downloadFile(`${chapterTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_reviews.json`, JSON.stringify(data, null, 2), 'application/json');
-            }
-
-            toggleExportMenu();
-            showToast(`Exported as ${format.toUpperCase()}`);
-        }
-
-        function downloadFile(filename, content, type) {
-            const blob = new Blob([content], { type: type });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    </script>
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const icon = document.getElementById('themeIcon');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+    }
+  </script>
 </body>
 </html>
