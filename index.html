@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Review Studio - Chapter Management & Multi-Agent Critique</title>
+  <title>Book Review Studio</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Marked.js for rendering markdown -->
@@ -17,31 +17,25 @@
     .prose h1 { font-size: 1.25rem; }
     .prose h2 { font-size: 1.1rem; }
     .prose h3 { font-size: 1rem; }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
   <!-- TOP HEADER -->
-  <header class="bg-slate-800 border-b border-slate-700 px-6 py-3.5 flex items-center justify-between shrink-0">
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between">
     <div class="flex items-center space-x-3">
       <i class="fa-solid fa-book-open-reader text-indigo-400 text-2xl"></i>
-      <div>
-        <h1 class="text-lg font-bold tracking-wide leading-tight">Book Review Studio</h1>
-        <p class="text-[11px] text-slate-400">Chapter Manager & Multi-Agent Critique</p>
-      </div>
+      <h1 class="text-xl font-bold tracking-wide">Book Review Studio</h1>
+      <span class="text-xs bg-indigo-900/60 text-indigo-300 border border-indigo-700 px-2 py-0.5 rounded-full font-mono">Multi-Agent Critique & Chapter Storage</span>
     </div>
     <div class="flex items-center space-x-3">
-      <button id="export-btn" onclick="exportMarkdown()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg flex items-center space-x-2 transition border border-slate-600">
+      <button id="export-btn" onclick="exportMarkdown()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm px-3 py-1.5 rounded-md flex items-center space-x-2 transition">
         <i class="fa-solid fa-download"></i>
         <span>Export MD</span>
       </button>
-      <button onclick="toggleSettingsModal(true)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-lg flex items-center space-x-2 transition shadow">
+      <button onclick="toggleSettingsModal(true)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-1.5 rounded-md flex items-center space-x-2 transition shadow">
         <i class="fa-solid fa-gear"></i>
-        <span>Settings & Keys</span>
+        <span>Settings & API Keys</span>
       </button>
     </div>
   </header>
@@ -49,51 +43,52 @@
   <!-- MAIN WORKSPACE LAYOUT -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
 
-    <!-- LEFT PANEL: CHAPTER MANAGER & INPUTS (5 Cols) -->
-    <section class="lg:col-span-5 flex flex-col space-y-4 bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg overflow-hidden">
+    <!-- LEFT PANEL: CONTROLS & CHAPTER INPUT (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col space-y-4 bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg">
       
-      <!-- CHAPTER SELECTION HEADER -->
-      <div class="space-y-2 border-b border-slate-700 pb-3">
-        <div class="flex items-center justify-between">
-          <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
-            <i class="fa-solid fa-list-check text-indigo-400"></i>
-            <span>Chapter Library</span>
-          </label>
-          <button onclick="createNewChapter()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-md transition flex items-center space-x-1">
-            <i class="fa-solid fa-plus"></i>
-            <span>New Chapter</span>
-          </button>
-        </div>
+      <!-- Chapter Management Header -->
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h2 class="text-lg font-semibold text-slate-200 flex items-center space-x-2">
+          <i class="fa-solid fa-book text-indigo-400"></i>
+          <span>Chapter Manager</span>
+        </h2>
+        <button onclick="createNewChapter()" class="bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700 text-xs px-2.5 py-1 rounded-md flex items-center space-x-1.5 transition">
+          <i class="fa-solid fa-plus text-xs"></i>
+          <span>New Chapter</span>
+        </button>
+      </div>
 
-        <!-- Chapter Selector Dropdown & Delete Button -->
-        <div class="flex items-center space-x-2">
-          <select id="chapter-select" onchange="onChapterSelectChange()" class="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-            <!-- Dynamically populated by JS -->
+      <!-- Chapter Dropdown Selector -->
+      <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1">Select Active Chapter</label>
+        <div class="flex space-x-2">
+          <select id="chapter-select" onchange="onChapterSelectChange()" class="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 font-medium">
+            <!-- Populated dynamically -->
           </select>
-          <button onclick="deleteCurrentChapter()" title="Delete Chapter" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800 px-3 py-2 rounded-md text-xs transition">
-            <i class="fa-solid fa-trash-can"></i>
+          <button onclick="deleteCurrentChapter()" title="Delete Chapter" class="bg-rose-900/40 hover:bg-rose-800/80 text-rose-300 border border-rose-800 px-3 rounded-md transition">
+            <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
       </div>
 
-      <!-- Chapter Metadata Fields -->
+      <!-- Form Metadata Inputs -->
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Chapter Title / ID</label>
-          <input id="chapter-title" type="text" placeholder="e.g. Chapter 1: The Arrival" oninput="autoSaveCurrentChapter()"
-            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+          <input id="chapter-title" type="text" oninput="autoSaveCurrentChapter()" placeholder="e.g. Chapter 1: The Arrival" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Genre / Context</label>
-          <input id="chapter-genre" type="text" placeholder="e.g. Sci-Fi, Fantasy" oninput="autoSaveCurrentChapter()"
-            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+          <input id="chapter-genre" type="text" oninput="autoSaveCurrentChapter()" placeholder="e.g. Sci-Fi, Dark Fantasy" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
         </div>
       </div>
 
       <!-- Target Age Group -->
       <div>
         <label class="block text-xs font-medium text-slate-400 mb-1">Target Consumer Age Group</label>
-        <select id="target-age-group" onchange="autoSaveCurrentChapter()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+        <select id="target-age-group" onchange="autoSaveCurrentChapter()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           <option value="Middle Grade (8-12 years)">Middle Grade (8–12 years)</option>
           <option value="Young Adult (12-18 years)">Young Adult (12–18 years)</option>
           <option value="New Adult (18-25 years)">New Adult (18–25 years)</option>
@@ -106,16 +101,16 @@
       <!-- Chapter Content Area -->
       <div class="flex-1 flex flex-col min-h-[200px]">
         <div class="flex justify-between items-center mb-1">
-          <label class="block text-xs font-medium text-slate-400">Chapter Content / Prose</label>
-          <span id="save-indicator" class="text-[10px] text-slate-500 font-mono">Saved</span>
+          <label class="block text-xs font-medium text-slate-400">Chapter Content / Text</label>
+          <span id="save-status" class="text-[11px] text-slate-500 font-mono">Auto-saved</span>
         </div>
-        <textarea id="chapter-text" placeholder="Paste or draft your chapter text here..." oninput="autoSaveCurrentChapter()"
-          class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-md p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed custom-scrollbar"></textarea>
+        <textarea id="chapter-text" oninput="autoSaveCurrentChapter()" placeholder="Paste your chapter text here..." 
+          class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-md p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed"></textarea>
       </div>
 
       <!-- Agent Selection Checkboxes -->
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-2">Active Reviewer Agents</label>
+        <label class="block text-xs font-medium text-slate-400 mb-2">Select Active Review Agents</label>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/80 p-2 rounded cursor-pointer hover:bg-slate-900">
             <input type="checkbox" id="agent-publisher" checked class="rounded text-indigo-600 focus:ring-0 bg-slate-800 border-slate-600">
@@ -141,9 +136,9 @@
       </div>
 
       <!-- Execute Button -->
-      <button id="run-btn" onclick="runAllReviews()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 rounded-md shadow-md flex items-center justify-center space-x-2 transition text-xs">
+      <button id="run-btn" onclick="runAllReviews()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-2.5 rounded-md shadow-md flex items-center justify-center space-x-2 transition">
         <i class="fa-solid fa-play"></i>
-        <span>Run Selected Reviews for Chapter</span>
+        <span>Run Selected Reviews</span>
       </button>
     </section>
 
@@ -165,12 +160,12 @@
       <!-- Empty State Container -->
       <div id="empty-state" class="flex-1 flex flex-col items-center justify-center text-slate-500 py-12">
         <i class="fa-solid fa-comments-question text-5xl mb-3 text-slate-600"></i>
-        <p class="text-base font-medium">No reviews generated for this chapter yet.</p>
-        <p class="text-xs text-slate-500 max-w-sm text-center mt-1">Configure your API key in Settings, paste a chapter on the left, and click "Run Selected Reviews".</p>
+        <p class="text-base font-medium">No reviews generated yet for this chapter.</p>
+        <p class="text-xs text-slate-500 max-w-sm text-center mt-1">Configure your API key in Settings, paste chapter text on the left, and click "Run Selected Reviews".</p>
       </div>
 
       <!-- Feedback Cards Scrollable Container -->
-      <div id="feedback-container" class="flex-1 overflow-y-auto space-y-4 pr-1 custom-scrollbar hidden">
+      <div id="feedback-container" class="flex-1 overflow-y-auto space-y-4 pr-1 hidden">
         
         <!-- Publisher Output Card -->
         <div id="card-publisher" class="agent-card bg-slate-900 border border-slate-700/80 rounded-lg p-4">
@@ -248,7 +243,7 @@
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Select AI Provider</label>
           <select id="setting-provider" onchange="onProviderChange()" class="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-            <option value="gemini" selected>Google Gemini (Free tier available)</option>
+            <option value="gemini" selected>Google Gemini (Free Tier available)</option>
             <option value="groq">Groq (Fast Open Models)</option>
             <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
             <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet)</option>
@@ -277,13 +272,14 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC & STORAGE MANAGEMENT -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Storage Keys
-    const STORE_KEY_CHAPTERS = "brs_chapters_data";
-    const STORE_KEY_ACTIVE_CHAPTER = "brs_active_chapter_id";
+    // LocalStorage Keys
     const STORE_KEY_PROVIDER = "brs_provider";
     const STORE_KEY_MODEL = "brs_model";
+    const STORE_KEY_CHAPTERS = "brs_book_chapters";
+    const STORE_KEY_ACTIVE_CHAPTER = "brs_active_chapter_id";
+
     const STORE_KEYS = {
       gemini: "brs_api_key_gemini",
       groq: "brs_api_key_groq",
@@ -293,9 +289,9 @@
 
     const MODEL_OPTIONS = {
       gemini: [
-        { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Recommended)" },
-        { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Fast)" },
-        { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro" }
+        { id: "gemini-3.8-flash", name: "Gemini 3.8 Flash (Recommended)" },
+        { id: "gemini-3.5-flash-lite", name: "Gemini 3.5 Flash-Lite (Fast)" },
+        { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash" }
       ],
       groq: [
         { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B (Recommended Flagship)" },
@@ -314,11 +310,11 @@
       ]
     };
 
-    // Global Chapter Data Array
-    let chapters = [];
-    let activeChapterId = null;
+    let chapters = {}; // Map of chapterId -> chapterObj
+    let activeChapterId = "";
+    let reviewResults = {}; // Active chapter's generated reviews
 
-    // Persona System Prompts
+    // System Prompts for Each Agent
     const PERSONA_PROMPTS = {
       publisher: `You are an experienced Literary Publisher evaluating a chapter submission. 
 Provide a detailed, critical review focusing on:
@@ -361,45 +357,42 @@ Review this chapter from a skeptical, newcomer perspective:
 Format in markdown focusing on clarity, friction points, and accessibility.`
     };
 
-    // Initialize App & Load Saved Chapters
+    // Initialize App
     window.addEventListener("DOMContentLoaded", () => {
-      loadChaptersFromStorage();
       loadSettingsIntoUI();
+      loadChaptersFromStorage();
     });
 
+    // CHAPTER & MANUSCRIPT STORAGE MANAGER
     function loadChaptersFromStorage() {
       const stored = localStorage.getItem(STORE_KEY_CHAPTERS);
       if (stored) {
-        try {
-          chapters = JSON.parse(stored);
-        } catch (e) {
-          console.error("Error parsing stored chapters:", e);
-          chapters = [];
-        }
+        try { chapters = JSON.parse(stored); } catch(e) { chapters = {}; }
       }
 
-      // Default sample chapter if empty
-      if (!chapters || chapters.length === 0) {
-        chapters = [
-          {
-            id: "chap_" + Date.now(),
-            title: "Chapter 1: The Arrival",
-            genre: "Sci-Fi / Cyberpunk",
-            targetAge: "Adult (25-45 years)",
-            text: "Rain fell in sheets over the luminescent spire of New Neo-Tokyo. Kael pulled his collar up against the chemical drizzle, adjusting the optical neural-implant over his left eye. He had twenty minutes before the Ministry patrol would scan the grid quadrant, and the data stick in his jacket held secrets that could either end the cybernetic embargo or trigger an orbital blackout.",
-            reviews: {}
-          }
-        ];
+      const storedActiveId = localStorage.getItem(STORE_KEY_ACTIVE_CHAPTER);
+      
+      // If no chapters exist, create initial default chapter
+      if (Object.keys(chapters).length === 0) {
+        const defaultId = "chap_" + Date.now();
+        chapters[defaultId] = {
+          id: defaultId,
+          title: "Chapter 1: The Beginning",
+          genre: "General Fiction",
+          targetAge: "Adult (25-45 years)",
+          text: "",
+          reviews: {}
+        };
+        activeChapterId = defaultId;
         saveChaptersToStorage();
+      } else if (storedActiveId && chapters[storedActiveId]) {
+        activeChapterId = storedActiveId;
+      } else {
+        activeChapterId = Object.keys(chapters)[0];
       }
 
-      activeChapterId = localStorage.getItem(STORE_KEY_ACTIVE_CHAPTER) || chapters[0].id;
-      if (!chapters.some(c => c.id === activeChapterId)) {
-        activeChapterId = chapters[0].id;
-      }
-
-      renderChapterDropdown();
-      loadActiveChapterToUI();
+      renderChapterSelect();
+      loadActiveChapterIntoUI();
     }
 
     function saveChaptersToStorage() {
@@ -407,104 +400,94 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       localStorage.setItem(STORE_KEY_ACTIVE_CHAPTER, activeChapterId);
     }
 
-    function renderChapterDropdown() {
+    function renderChapterSelect() {
       const select = document.getElementById("chapter-select");
       select.innerHTML = "";
-      chapters.forEach(c => {
+      Object.values(chapters).forEach(chap => {
         const opt = document.createElement("option");
-        opt.value = c.id;
-        opt.textContent = c.title || "Untitled Chapter";
-        if (c.id === activeChapterId) opt.selected = true;
+        opt.value = chap.id;
+        opt.textContent = chap.title || "Untitled Chapter";
+        if (chap.id === activeChapterId) opt.selected = true;
         select.appendChild(opt);
       });
     }
 
-    function loadActiveChapterToUI() {
-      const current = getCurrentChapter();
-      if (!current) return;
+    function loadActiveChapterIntoUI() {
+      const chap = chapters[activeChapterId];
+      if (!chap) return;
 
-      document.getElementById("chapter-title").value = current.title || "";
-      document.getElementById("chapter-genre").value = current.genre || "";
-      document.getElementById("target-age-group").value = current.targetAge || "Adult (25-45 years)";
-      document.getElementById("chapter-text").value = current.text || "";
+      document.getElementById("chapter-title").value = chap.title || "";
+      document.getElementById("chapter-genre").value = chap.genre || "";
+      document.getElementById("target-age-group").value = chap.targetAge || "Adult (25-45 years)";
+      document.getElementById("chapter-text").value = chap.text || "";
 
-      // Restore saved reviews for this chapter
-      renderSavedReviewsUI(current.reviews || {});
-    }
-
-    function getCurrentChapter() {
-      return chapters.find(c => c.id === activeChapterId);
+      reviewResults = chap.reviews || {};
+      renderReviewsUI();
     }
 
     function autoSaveCurrentChapter() {
-      const current = getCurrentChapter();
-      if (!current) return;
+      if (!activeChapterId || !chapters[activeChapterId]) return;
 
-      current.title = document.getElementById("chapter-title").value.trim() || "Untitled Chapter";
-      current.genre = document.getElementById("chapter-genre").value.trim();
-      current.targetAge = document.getElementById("target-age-group").value;
-      current.text = document.getElementById("chapter-text").value;
-      current.lastSaved = new Date().toISOString();
+      const chap = chapters[activeChapterId];
+      chap.title = document.getElementById("chapter-title").value;
+      chap.genre = document.getElementById("chapter-genre").value;
+      chap.targetAge = document.getElementById("target-age-group").value;
+      chap.text = document.getElementById("chapter-text").value;
 
       saveChaptersToStorage();
-      renderChapterDropdown();
+      
+      // Update dropdown option text live
+      const selectOpt = document.querySelector(`#chapter-select option[value="${activeChapterId}"]`);
+      if (selectOpt) selectOpt.textContent = chap.title || "Untitled Chapter";
 
-      const indicator = document.getElementById("save-indicator");
-      indicator.textContent = "Auto-saved";
-      indicator.classList.remove("text-slate-500");
-      indicator.classList.add("text-emerald-400");
-      setTimeout(() => {
-        indicator.textContent = "Saved";
-        indicator.classList.remove("text-emerald-400");
-        indicator.classList.add("text-slate-500");
-      }, 1500);
+      const statusEl = document.getElementById("save-status");
+      statusEl.textContent = "Saved";
+      statusEl.className = "text-[11px] text-emerald-400 font-mono";
+      setTimeout(() => { statusEl.textContent = "Auto-saved"; statusEl.className = "text-[11px] text-slate-500 font-mono"; }, 1500);
     }
 
     function createNewChapter() {
       const newId = "chap_" + Date.now();
-      const newNum = chapters.length + 1;
-      const newChap = {
+      const count = Object.keys(chapters).length + 1;
+      chapters[newId] = {
         id: newId,
-        title: `Chapter ${newNum}: Untitled`,
-        genre: document.getElementById("chapter-genre").value.trim() || "General Fiction",
-        targetAge: document.getElementById("target-age-group").value,
+        title: `Chapter ${count}`,
+        genre: document.getElementById("chapter-genre").value || "General Fiction",
+        targetAge: document.getElementById("target-age-group").value || "Adult (25-45 years)",
         text: "",
         reviews: {}
       };
 
-      chapters.push(newChap);
       activeChapterId = newId;
       saveChaptersToStorage();
-      renderChapterDropdown();
-      loadActiveChapterToUI();
-    }
-
-    function deleteCurrentChapter() {
-      if (chapters.length <= 1) {
-        alert("You must keep at least one chapter in your library.");
-        return;
-      }
-
-      if (!confirm("Are you sure you want to delete this chapter and its reviews?")) {
-        return;
-      }
-
-      chapters = chapters.filter(c => c.id !== activeChapterId);
-      activeChapterId = chapters[0].id;
-      saveChaptersToStorage();
-      renderChapterDropdown();
-      loadActiveChapterToUI();
+      renderChapterSelect();
+      loadActiveChapterIntoUI();
     }
 
     function onChapterSelectChange() {
       activeChapterId = document.getElementById("chapter-select").value;
       saveChaptersToStorage();
-      loadActiveChapterToUI();
+      loadActiveChapterIntoUI();
     }
 
-    function renderSavedReviewsUI(reviews) {
+    function deleteCurrentChapter() {
+      if (Object.keys(chapters).length <= 1) {
+        alert("You must keep at least one chapter in your book project.");
+        return;
+      }
+
+      if (confirm(`Are you sure you want to delete "${chapters[activeChapterId]?.title}"?`)) {
+        delete chapters[activeChapterId];
+        activeChapterId = Object.keys(chapters)[0];
+        saveChaptersToStorage();
+        renderChapterSelect();
+        loadActiveChapterIntoUI();
+      }
+    }
+
+    function renderReviewsUI() {
       const agentKeys = ["publisher", "editor", "writer", "target-fan", "skeptic-reader"];
-      const hasReviews = Object.keys(reviews).length > 0;
+      const hasReviews = Object.keys(reviewResults).length > 0;
 
       if (!hasReviews) {
         document.getElementById("empty-state").classList.remove("hidden");
@@ -517,25 +500,27 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       document.getElementById("feedback-container").classList.remove("hidden");
       document.getElementById("export-btn").classList.remove("hidden");
 
-      switchTab("all");
-
       agentKeys.forEach(key => {
-        const card = document.getElementById(`card-${key}`);
         const body = document.getElementById(`body-${key}`);
         const status = document.getElementById(`status-${key}`);
+        const card = document.getElementById(`card-${key}`);
 
-        if (reviews[key]) {
+        if (reviewResults[key]) {
           card.classList.remove("hidden");
-          body.innerHTML = marked.parse(reviews[key]);
+          body.innerHTML = marked.parse(reviewResults[key]);
           status.textContent = "Complete";
           status.className = "text-xs text-emerald-400 font-mono";
         } else {
-          card.classList.add("hidden");
+          body.innerHTML = `<p class="text-slate-500 italic text-xs">No review generated for this agent.</p>`;
+          status.textContent = "Not Run";
+          status.className = "text-xs text-slate-500 font-mono";
         }
       });
+
+      switchTab("all");
     }
 
-    // Modal & Settings Functions
+    // SETTINGS & API MODAL LOGIC
     function toggleSettingsModal(show) {
       document.getElementById("settings-modal").classList.toggle("hidden", !show);
       if (show) loadSettingsIntoUI();
@@ -559,7 +544,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
 
     function loadSettingsIntoUI() {
       const savedProvider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
-      let savedModel = localStorage.getItem(STORE_KEY_MODEL) || "gemini-2.5-flash";
+      let savedModel = localStorage.getItem(STORE_KEY_MODEL) || "gemini-3.8-flash";
 
       savedModel = savedModel.replace(/^models\//, "");
 
@@ -588,6 +573,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       alert("Settings saved successfully!");
     }
 
+    // TAB SWITCHER
     function switchTab(agentKey) {
       document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.classList.remove("bg-indigo-600", "text-white");
@@ -610,10 +596,10 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
       }
     }
 
-    // Trigger AI Reviews Across Selected Agents
+    // MULTI-AGENT EXECUTION PIPELINE
     async function runAllReviews() {
       const provider = localStorage.getItem(STORE_KEY_PROVIDER) || "gemini";
-      let model = localStorage.getItem(STORE_KEY_MODEL) || "gemini-2.5-flash";
+      let model = localStorage.getItem(STORE_KEY_MODEL) || "gemini-3.8-flash";
       const apiKey = localStorage.getItem(STORE_KEYS[provider]) || "";
 
       model = model.replace(/^models\//, "");
@@ -624,11 +610,13 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
         return;
       }
 
-      autoSaveCurrentChapter();
-      const current = getCurrentChapter();
+      const title = document.getElementById("chapter-title").value.trim() || "Untitled Chapter";
+      const genre = document.getElementById("chapter-genre").value.trim() || "General Fiction";
+      const targetAge = document.getElementById("target-age-group").value;
+      const text = document.getElementById("chapter-text").value.trim();
 
-      if (!current.text || !current.text.trim()) {
-        alert("Please write or paste chapter text before running reviews.");
+      if (!text) {
+        alert("Please paste your chapter text before running reviews.");
         return;
       }
 
@@ -640,6 +628,7 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
         return;
       }
 
+      // UI Reset
       document.getElementById("empty-state").classList.add("hidden");
       document.getElementById("feedback-container").classList.remove("hidden");
       document.getElementById("export-btn").classList.remove("hidden");
@@ -659,25 +648,27 @@ Format in markdown focusing on clarity, friction points, and accessibility.`
         }
       });
 
-      const promises = activeAgents.map(agentKey => 
-        fetchAgentReview(agentKey, { provider, model, apiKey, chapter: current })
-      );
-
+      const promises = activeAgents.map(agentKey => fetchAgentReview(agentKey, { provider, model, apiKey, title, genre, targetAge, text }));
       await Promise.all(promises);
-      saveChaptersToStorage();
+
+      // Save updated reviews into active chapter object & persist
+      if (chapters[activeChapterId]) {
+        chapters[activeChapterId].reviews = reviewResults;
+        saveChaptersToStorage();
+      }
     }
 
     async function fetchAgentReview(agentKey, context) {
-      const { provider, model, apiKey, chapter } = context;
+      const { provider, model, apiKey, title, genre, targetAge, text } = context;
 
       const userPrompt = `
-CHAPTER TITLE: ${chapter.title}
-GENRE / CONTEXT: ${chapter.genre}
-AUTHOR'S TARGET AGE GROUP: ${chapter.targetAge}
+CHAPTER TITLE: ${title}
+GENRE / CONTEXT: ${genre}
+AUTHOR'S TARGET AGE GROUP: ${targetAge}
 
 CHAPTER MANUSCRIPT TEXT:
 """
-${chapter.text}
+${text}
 """
 `;
 
@@ -696,9 +687,7 @@ ${chapter.text}
           responseMarkdown = await callAnthropicAPI(apiKey, model, systemPrompt, userPrompt);
         }
 
-        if (!chapter.reviews) chapter.reviews = {};
-        chapter.reviews[agentKey] = responseMarkdown;
-
+        reviewResults[agentKey] = responseMarkdown;
         document.getElementById(`body-${agentKey}`).innerHTML = marked.parse(responseMarkdown);
         document.getElementById(`status-${agentKey}`).textContent = "Complete";
         document.getElementById(`status-${agentKey}`).className = "text-xs text-emerald-400 font-mono";
@@ -711,7 +700,7 @@ ${chapter.text}
       }
     }
 
-    // API Handlers
+    // API REQUEST HANDLERS
     async function callGeminiAPI(apiKey, model, systemPrompt, userPrompt) {
       const cleanModel = model.replace(/^models\//, "");
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${apiKey}`;
@@ -811,22 +800,22 @@ ${chapter.text}
       return data.content[0].text;
     }
 
-    // Export Active Chapter Feedback Matrix as Markdown
+    // EXPORT REPORT TO MARKDOWN
     function exportMarkdown() {
-      const current = getCurrentChapter();
-      if (!current) return;
+      const title = document.getElementById("chapter-title").value || "Chapter Review";
+      const genre = document.getElementById("chapter-genre").value || "General";
+      const targetAge = document.getElementById("target-age-group").value;
 
-      let markdownContent = `# Book Review Studio Report: ${current.title}\n`;
-      markdownContent += `**Genre / Context:** ${current.genre || 'General'}  \n`;
-      markdownContent += `**Intended Target Consumer Age:** ${current.targetAge}  \n`;
+      let markdownContent = `# Book Review Studio Report: ${title}\n`;
+      markdownContent += `**Genre / Context:** ${genre}  \n`;
+      markdownContent += `**Intended Target Consumer Age:** ${targetAge}  \n`;
       markdownContent += `**Generated Date:** ${new Date().toLocaleDateString()}  \n\n`;
       markdownContent += `---\n\n`;
 
-      const reviews = current.reviews || {};
-      Object.keys(reviews).forEach(key => {
+      Object.keys(reviewResults).forEach(key => {
         const formattedTitle = key.replace("-", " ").toUpperCase();
         markdownContent += `## Reviewer Persona: ${formattedTitle}\n\n`;
-        markdownContent += `${reviews[key]}\n\n`;
+        markdownContent += `${reviewResults[key]}\n\n`;
         markdownContent += `---\n\n`;
       });
 
@@ -834,7 +823,7 @@ ${chapter.text}
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${current.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}-review-matrix.md`;
+      a.download = `${title.toLowerCase().replace(/[^a-z0-9]/g, "-")}-review-matrix.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
