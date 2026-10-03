@@ -532,7 +532,10 @@ ${text}
     }
 
     async function callGeminiAPI(apiKey, model, systemPrompt, userPrompt) {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      // Strip 'models/' prefix if present
+      const cleanModel = model.replace(/^models\//, "");
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${apiKey}`;
+      
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
