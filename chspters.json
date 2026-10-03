@@ -1,0 +1,10 @@
+{
+  "chap_default": {
+    "id": "chap_default",
+    "title": "Chapter 1: The Beginning",
+    "genre": "General Fiction",
+    "targetAge": "Adult (25-45 years)",
+    "text": "Paste your chapter text here...",
+    "reviews": {}
+  }
+}
