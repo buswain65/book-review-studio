@@ -3,18 +3,26 @@
     "book_default": {
       "id": "book_default",
       "title": "My First Novel",
-      "genre": "General Fiction",
+      "genre": "Fantasy / Isekai",
       "targetAge": "Adult (25-45 years)",
-      "chapters": {
+      "chapters": [
         "chap_default": {
           "id": "chap_default",
-          "title": "Chapter 1: The Beginning",
-          "genre": "General Fiction",
+          "title": "Prologue: The Crunch Before the Dark",
+          "genre": "Fantasy / Isekai",
           "targetAge": "Adult (25-45 years)",
-          "text": "Paste your chapter text here...",
+          "text": "### Prologue: The Crunch Before the Dark\n\nThe second monitor was burning a hole through Mark’s retinas.\n\nIt was 11:42 PM on a Thursday. Outside his home office window, the thick, heavy North Carolina rain was humming against the roof, dripping off the loblolly pines in his Raleigh backyard. Inside, Mark’s blood pressure was hitting a peak it hadn't reached since the 1990s dot-com crash.\n\nHe took a sip of lukewarm black coffee and stared at the Slack message from Brad—a 29-year-old Senior Director of Product who had never written a line of code in his life, but possessed an unlimited supply of buzzwords.\n\n> **Brad [11:38 PM]:** *Hey Mark! Quick pivot for tomorrow’s launch. VP wants us to swap out the entire authentication backend for the new OAuth2 partner pipeline. Should be a quick drop-in, right? We’re still good for 8 AM deployment?*\n\nMark took off his reading glasses, pinched the bridge of his nose, and let out a long, wheezing breath that rattled in his 62-year-old chest.\n\n*A quick drop-in.*\n\nSwapping the auth pipeline eight hours before code freeze wasn't a "pivot." It was like asking a carpenter to replace the foundation of a skyscraper while the tenants were moving into the penthouse. And, as usual, Brad had explicitly promised the executive team that the deadline wouldn't move by a single minute.\n\nMark typed back, his arthritic knuckles clicking against the mechanical keyboard:\n\n> **Mark [11:40 PM]:** *Brad, that’s a four-week refactor. Re-routing token validation alone breaks half the microservices. If we push this now, the entire production cluster will implode.*\n\nThe reply was instantaneous, complete with a smiling emoji.\n\n> **Mark [11:41 PM]:** *Let's be solution-oriented here! You've got the historical context to make it happen. Grab an energy drink and work your magic! 🚀*\n\nMark stared at the glowing rocket emoji.\n\nForty years. Forty years of this.\n\nHe had started his career writing C on green-screen terminals, back when software felt like craftsmanship. He’d survived three corporate acquisitions, four major tech shifts, and a thousand incompetent middle managers. He had sacrificed his shoulders to whitewater kayaking, his knees to martial arts mats and mountain bike trails, and his back to ergonomic office chairs—all to end up taking orders from a kid in a vest who thought "magic" was a technical specification.\n\nHe felt a sudden, strange tightness in his chest. A sharp, burning sensation crept up the left side of his neck, followed by a sudden, metallic taste on the back of his tongue.\n\nHis vision tubed. The dual monitors blared a blinding white light, and the rhythmic *clack-clack* of his own nervous heartbeat sounded like a paddle slapping against river rapids.\n\nMark tried to reach for his phone on the desk, but his left arm felt like it was encased in wet concrete. His head slumped forward, hitting the keyboard, holding down the backspace key.\n\n*Ah,* Mark thought, as the dark water pulled him under. *Classic cardiac event. Or a massive stroke. Honestly? Still better than attending the 8 AM deployment stand-up.*\n\n",
           "reviews": {}
-        }
-      }
+        },
+		"chap_one": {
+          "id": "chap_default",
+          "title": "Prologue: The Crunch Before the Dark",
+          "genre": "Fantasy / Isekai",
+          "targetAge": "Adult (25-45 years)",
+		  "text": "### Chapter 1: The Rollback\n\nMark sat up.\n\nOr rather, he *popped* up, springing off the mossy ground without his right knee cracking like a dry twig or his lower lumbar screaming in protest.\n\nHe froze, sitting on his heels. No dull ache in his neck. No stiffness in his shoulder from that rotator cuff tear he’d earned in a kayak back in 2018. He took a deep, clear breath through his nose—no chronic sinus pressure, no wheeze.\n\nHe looked down at his hands. Smooth skin. Small knuckles. No arthritis. No calluses from forty years of typing or twenty years of chalking up at the climbing gym.\n\n*"Aha,"* Mark murmured. His voice was too high, crisp and light, missing the gravelly 60-year-old baritone he’d used to argue with product managers for the last three decades. *"Massive stroke. Probable left-hemisphere bleed. Brain is dumping endorphins and running a childhood nostalgia sequence while the ICU team calls my time of death."*\n\nHe flexed his fingers, making a tight fist, then stood up and bounced twice on his toes. He felt ridiculously light—maybe 110 pounds instead of his usual 185.\n\nHe picked up a nearby fist-sized river rock, feeling its weight, texture, and grain. *"Basalt. Igneous. High cooling rate,"* he noted automatically, his general geology knowledge surfacing effortlessly. He looked at the nearby river—a roaring class-IV rapid churning white foam around exposed granite boulders. He instantly identified the pillow waves, the undercut rocks, and the safe eddy line on the far bank.\n\n*"Fascinating render,"* Mark said to the empty air, smiling faintly. *"If I’m going out, at least my subconscious built a nice river for it. Way better than dying with Slack open."*\n\nA wild, horned beast burst through the thicket across the bank, roaring with real, damp heat that blew across his face.\n\nMark didn't flinch. He just crossed his small, teenage arms and watched it with the casual detachment of a veteran software architect watching a junior dev break the staging server.\n\n*"Go ahead,"* Mark told the monster. *"Let's see what kind of combat routine my dying neurons cooked up."*\n\n",
+          "reviews": {}
+		}
+      ]
     }
   },
   "activeBookId": "book_default"
